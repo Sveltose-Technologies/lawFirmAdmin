@@ -65,7 +65,6 @@ export default function Home() {
           </Col>
         </Row>
 
-        {/* --- NOTE: Blog Section Removed Completely --- */}
       </div>
     </div>
   );

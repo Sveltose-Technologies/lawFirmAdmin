@@ -22,7 +22,7 @@ const ProfitChart = () => {
         height: 250, // Yahan height kam kar di hai (350 -> 250)
         toolbar: { show: false },
       },
-      colors: ["#e0e0e0", "#eebb5d"],
+      colors: ["#eebb5d", "#eebb5d"],
       plotOptions: {
         bar: {
           horizontal: false,

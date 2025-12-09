@@ -1,17 +1,16 @@
 "use client";
 import React from "react";
-import "@/styles/style.scss"; // Styles
-import { GlobalProvider } from "@/context/GlobalContext"; 
 
-// --- IMPORTS CHECK KAREIN ---
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import "bootstrap-icons/font/bootstrap-icons.css"; 
+
+import { GlobalProvider } from "@/context/GlobalContext"; 
 import Sidebar from "./layouts/sidebars/vertical/Sidebar";
-// ✅ Sahi Import (Bina brackets ke)
 import Header from './layouts/header/Header';
 
-
-
-
 export default function RootLayout({ children }) {
+  // ... baaki code waisa hi rahega
   const [showMobilemenu, setShowMobilemenu] = React.useState(false);
 
   return (

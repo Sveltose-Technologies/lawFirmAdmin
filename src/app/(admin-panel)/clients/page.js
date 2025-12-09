@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, CardBody, Table, Input, Button, Modal, ModalHeader, ModalBody, Form, FormGroup, Label } from "reactstrap";
 import { useGlobalData } from '@/context/GlobalContext';
 import { ToastContainer, toast } from 'react-toastify';
@@ -37,8 +37,32 @@ const Clients = () => {
       <ToastContainer />
       <Card className="mb-4 border-0 shadow-sm"><CardBody className="p-3"><h5 className="mb-0 fw-bold" style={{color: GOLD}}>Clients</h5></CardBody></Card>
       <Card className="border-0 shadow-sm"><CardBody className="p-4">
-        <div className="d-flex justify-content-between mb-4"><Input placeholder="Search..." className="rounded-pill" style={{maxWidth:'300px'}} onChange={e=>setSearchTerm(e.target.value)} /><Button onClick={toggle} style={{backgroundColor: GOLD, border:'none'}}>Add Client</Button></div>
-        <Table className="align-middle text-nowrap"><thead className="table-light"><tr><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th className="text-end">Action</th></tr></thead><tbody>
+        
+        {/* RESPONSIVE LAYOUT FIX */}
+        <div className="d-flex flex-column flex-sm-row justify-content-between mb-4 gap-3">
+            {/* Search Input Wrapper */}
+            <div className="w-100" style={{maxWidth:'300px'}}>
+                <Input 
+                    placeholder="Search..." 
+                    className="rounded-pill" 
+                    onChange={e=>setSearchTerm(e.target.value)} 
+                />
+            </div>
+            
+            {/* Add Button Wrapper */}
+            {/* Wrapper div behaves naturally on desktop, stretches on mobile */}
+            <div>
+                <Button 
+                    onClick={toggle} 
+                    className="w-100" // Button fills its wrapper (wrapper is full on mobile, auto on desktop)
+                    style={{backgroundColor: GOLD, border:'none', whiteSpace: 'nowrap'}}
+                >
+                    Add Client
+                </Button>
+            </div>
+        </div>
+
+        <Table responsive className="align-middle text-nowrap"><thead className="table-light"><tr><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th className="text-end">Action</th></tr></thead><tbody>
           {filteredData.map(item => (<tr key={item.id}><td>{item.name}</td><td>{item.email}</td><td>{item.phone}</td><td>{item.address}</td><td className="text-end"><button onClick={()=>handleEdit(item)} className="btn btn-sm me-2" style={{color:GOLD, borderColor:GOLD}}><i className="bi bi-pencil"></i></button><button onClick={()=>handleDelete(item.id)} className="btn btn-sm text-danger border-danger"><i className="bi bi-trash"></i></button></td></tr>))}
         </tbody></Table>
       </CardBody></Card>

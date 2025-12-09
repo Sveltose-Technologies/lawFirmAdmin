@@ -47,20 +47,20 @@ const navigation = [
 
   // 6. Content & CMS
   { header: "CONTENT & CMS" },
-  { title: "Blogs", href: "", icon: "bi bi-newspaper" },
-  { title: "Blog Category", href: "", icon: "bi bi-bookmarks" },
-  { title: "Media", href: "", icon: "bi bi-images" },
-  { title: "CMS", href: "", icon: "bi bi-window-sidebar" }, 
-  { title: "Client Communication", href: "", icon: "bi bi-chat-dots" },
-  { title: "Review & Rating", href: "", icon: "bi bi-stars" },
+  { title: "Blogs", href: "#", icon: "bi bi-newspaper" },
+  { title: "Blog Category", href: "#", icon: "bi bi-bookmarks" },
+  { title: "Media", href: "#", icon: "bi bi-images" },
+  { title: "CMS", href: "#", icon: "bi bi-window-sidebar" }, 
+  { title: "Client Communication", href: "#", icon: "bi bi-chat-dots" },
+  { title: "Review & Rating", href: "#", icon: "bi bi-stars" },
 
   // 7. Other
   { header: "OTHER" },
-  { title: "Contact", href: "", icon: "bi bi-calendar-event" },
+  { title: "Contact", href: "#", icon: "bi bi-calendar-event" },
 
   // 8. Settings
   { header: "SETTINGS" },
-  { title: "Log Report", href: "", icon: "bi bi-journal-text" }, 
+  { title: "Log Report", href: "#", icon: "bi bi-journal-text" }, 
 ];
 
 export default function Sidebar({ showMobilemenu }) {
