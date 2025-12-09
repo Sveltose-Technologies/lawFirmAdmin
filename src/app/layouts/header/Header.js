@@ -104,7 +104,14 @@ const Header = ({ showMobmenu }) => {
               <DropdownItem header>My Account</DropdownItem>
               <DropdownItem>Profile</DropdownItem>
               <DropdownItem>Change Password</DropdownItem>
-              
+               <DropdownItem>
+                  <Link 
+                      href="/attorney-panel" 
+                      style={{ textDecoration: "none", color: "inherit", width: "100%", display: "block" }}
+                  >
+                      Attonry Panel
+                  </Link>
+              </DropdownItem>
               <DropdownItem>
                   <Link 
                       href="/user-panel/dashboard" 
@@ -113,6 +120,7 @@ const Header = ({ showMobmenu }) => {
                       User Panel
                   </Link>
               </DropdownItem>
+             
 
               <DropdownItem divider />
               <DropdownItem>Logout</DropdownItem>
