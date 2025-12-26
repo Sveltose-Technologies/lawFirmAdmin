@@ -106,18 +106,20 @@ const Header = ({ showMobmenu }) => {
               <DropdownItem>Change Password</DropdownItem>
                <DropdownItem>
                   <Link 
-                      href="/attorney-panel" 
+                      href="#" 
                       style={{ textDecoration: "none", color: "inherit", width: "100%", display: "block" }}
                   >
+                    {/* /attorney-panel */}
                       Attonry Panel
                   </Link>
               </DropdownItem>
               <DropdownItem>
                   <Link 
-                      href="/user-panel/dashboard" 
-                      style={{ textDecoration: "none", color: "inherit", width: "100%", display: "block" }}
+                      href="#" 
+                      style={{ textDecoration: "none", color: "inherit", width: "100%", display: "block" }} 
                   >
-                      User Panel
+                    {/* /user-panel/dashboard" */}
+                      User Panel  
                   </Link>
               </DropdownItem>
              

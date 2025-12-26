@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from "react";
 import { Row, Col, Card, CardBody, Table, Button, Input, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import SidebarUser from "@/app/(admin-panel)/layouts/sidebars/vertical/SidebarUser";
+import SidebarUser from "@/app/layouts/sidebars/vertical/SidebarUser";
 
 // --- 1. TOAST IMPORTS ---
 import { ToastContainer, toast } from 'react-toastify';

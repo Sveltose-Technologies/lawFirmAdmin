@@ -4,8 +4,9 @@ import { Button, Nav, NavItem, Collapse } from "reactstrap";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const COLOR = "#eebb5d"; // Theme Color
+const COLOR = "#eebb5d"; // आपका बताया हुआ कलर
 
+// --- सारी लिस्ट (Old + New 29 Points) ---
 const navigation = [
   // 1. Dashboard
   { title: "Dashboard", href: "/", icon: "bi bi-speedometer2" },
@@ -39,7 +40,9 @@ const navigation = [
 
   // 5. Finance
   { header: "FINANCE & PAYMENT" },
-  { title: "Case Bill", href: "/case-bill", icon: "bi bi-receipt" },
+  // { title: "Payment Method", href: "/payment-method", icon: "bi bi-credit-card" },
+  // { title: "Payment List", href: "/payment-list", icon: "bi bi-cash-stack" },
+  { title: "Case Bill", href: "/case-bill", icon: "bi bi-receipt" },//case-bill
   { title: "Expenses", href: "/expenses", icon: "bi bi-cash-coin" },
   { title: "Transactions", href: "/transactions", icon: "bi bi-currency-exchange" },
   { title: "Platform Fees", href: "/platform-fees", icon: "bi bi-wallet2" }, 
@@ -47,20 +50,31 @@ const navigation = [
 
   // 6. Content & CMS
   { header: "CONTENT & CMS" },
-  { title: "Blogs", href: "#", icon: "bi bi-newspaper" },
-  { title: "Blog Category", href: "#", icon: "bi bi-bookmarks" },
-  { title: "Media", href: "#", icon: "bi bi-images" },
-  { title: "CMS", href: "#", icon: "bi bi-window-sidebar" }, 
-  { title: "Client Communication", href: "#", icon: "bi bi-chat-dots" },
-  { title: "Review & Rating", href: "#", icon: "bi bi-stars" },
+  { title: "Blogs", href: "/blogs", icon: "bi bi-newspaper" },//blogs
+  { title: "Blog Category", href: "/category", icon: "bi bi-bookmarks" },//category
+  // { title: "Tags", href: "/tags", icon: "bi bi-tags" },
+  { title: "Media", href: "/media", icon: "bi bi-images" },//media
+  { title: "CMS", href: "/cms", icon: "bi bi-window-sidebar" }, 
+  { title: "Client Communication", href: "/client-communication", icon: "bi bi-chat-dots" },
+  { title: "Review & Rating", href: "/review-rating", icon: "bi bi-stars" },
 
-  // 7. Other
+  // 7. Other (Existing)
   { header: "OTHER" },
-  { title: "Contact", href: "#", icon: "bi bi-calendar-event" },
+  { title: "Service", href: "/service", icon: "bi bi-hammer" },
+  { title: "Newsletter", href: "/newsletter", icon: "bi bi-envelope-paper" },
+  { title: "Testimonial", href: "/testimonial", icon: "bi bi-chat-quote" },
+  { title: "Contact", href: "/contact", icon: "bi bi-calendar-event" },
+  { title: "Message", href: "/message", icon: "bi bi-chat-dots" },
 
   // 8. Settings
   { header: "SETTINGS" },
-  { title: "Log Report", href: "#", icon: "bi bi-journal-text" }, 
+  { title: "Settings", href: "/settings", icon: "bi bi-wrench" },
+  { title: "Languages", href: "/languages", icon: "bi bi-translate" },
+  { title: "Email Settings", href: "/email-settings", icon: "bi bi-envelope" },
+  { title: "Faq", href: "/faq", icon: "bi bi-question-circle" },
+  { title: "Page Settings", href: "/pages-list", icon: "bi bi-file-earmark-text" },
+  
+  { title: "Log Report", href: "", icon: "bi bi-journal-text" }, //log-report
 ];
 
 export default function Sidebar({ showMobilemenu }) {
@@ -141,7 +155,7 @@ export default function Sidebar({ showMobilemenu }) {
                     {/* Toggle Arrow */}
                     <i
                       onClick={(e) => {
-                         e.preventDefault(); 
+                         e.preventDefault(); // Prevent Link click when clicking arrow
                          toggle(navi.id);
                       }}
                       className={`bi ${collapseState[navi.id] ? "bi-chevron-up" : "bi-chevron-down"}`}

@@ -91,7 +91,7 @@ export default function Sidebar({ showMobilemenu }) {
       <div className="d-flex align-items-center mb-4 px-2">
         <Link href="/" className="text-decoration-none">
           <span style={{ color: COLOR, fontWeight: "bold", fontSize: "1.5rem" }}>
-            Lawstick 
+            Lawstick-shubhu
           </span>
         </Link>
 

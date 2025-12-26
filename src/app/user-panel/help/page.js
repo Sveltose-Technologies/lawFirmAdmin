@@ -1,7 +1,7 @@
 'use client';
 import React from "react";
 import { Row, Col, Card, CardBody } from "reactstrap";
-import SidebarUser from "@/app/(admin-panel)/layouts/sidebars/vertical/SidebarUser";
+import SidebarUser from "@/app/layouts/sidebars/vertical/SidebarUser";
 
 export default function HelpInfo() {
   const goldColor = "#eebb5d";

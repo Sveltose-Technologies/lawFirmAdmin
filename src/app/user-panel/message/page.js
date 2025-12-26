@@ -9,7 +9,7 @@ import {
   Container
 } from "reactstrap";
 // Ensure this path is correct based on your project structure
-import SidebarUser from "@/app/(admin-panel)/layouts/sidebars/vertical/SidebarUser";
+import SidebarUser from "@/app/layouts/sidebars/vertical/SidebarUser";
 
 const Message = () => {
   const goldColor = "#eebb5d";

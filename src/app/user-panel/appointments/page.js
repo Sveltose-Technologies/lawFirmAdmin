@@ -3,8 +3,7 @@ import React, { useState } from "react";
 import { 
   Row, Col, Card, CardBody, Table, Badge, Button, Modal, ModalHeader, ModalBody, Input 
 } from "reactstrap";
-import SidebarUser from "@/app/(admin-panel)/layouts/sidebars/vertical/SidebarUser";
-// --- 1. TOAST IMPORTS ---
+import SidebarUser from "@/app/layouts/sidebars/vertical/SidebarUser";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
