@@ -44,36 +44,36 @@ const navigation = [
   // { title: "Payment List", href: "/payment-list", icon: "bi bi-cash-stack" },
   { title: "Case Bill", href: "/case-bill", icon: "bi bi-receipt" },//case-bill
   { title: "Expenses", href: "/expenses", icon: "bi bi-cash-coin" },
-  { title: "Transactions", href: "", icon: "bi bi-currency-exchange" },//transactions
-  { title: "Platform Fees", href: "", icon: "bi bi-wallet2" }, //platform-fees
-  { title: "Payment Report", href: "", icon: "bi bi-file-earmark-bar-graph" },//payment-repor
+  { title: "Transactions", href: "/transactions", icon: "bi bi-currency-exchange" },
+  { title: "Platform Fees", href: "/platform-fees", icon: "bi bi-wallet2" }, 
+  { title: "Payment Report", href: "/payment-report", icon: "bi bi-file-earmark-bar-graph" },
 
   // 6. Content & CMS
   { header: "CONTENT & CMS" },
-  { title: "Blogs", href: "", icon: "bi bi-newspaper" },//blogs
-  { title: "Blog Category", href: "", icon: "bi bi-bookmarks" },//category
+  { title: "Blogs", href: "/blogs", icon: "bi bi-newspaper" },//blogs
+  { title: "Blog Category", href: "/category", icon: "bi bi-bookmarks" },//category
   // { title: "Tags", href: "/tags", icon: "bi bi-tags" },
-  { title: "Media", href: "", icon: "bi bi-images" },//media
-  { title: "CMS", href: "", icon: "bi bi-window-sidebar" }, //cms
-  { title: "Client Communication", href: "", icon: "bi bi-chat-dots" },//client-communication
-  { title: "Review & Rating", href: "", icon: "bi bi-stars" },//review-rating
+  { title: "Media", href: "/media", icon: "bi bi-images" },//media
+  { title: "CMS", href: "/cms", icon: "bi bi-window-sidebar" }, 
+  { title: "Client Communication", href: "/client-communication", icon: "bi bi-chat-dots" },
+  { title: "Review & Rating", href: "/review-rating", icon: "bi bi-stars" },
 
   // 7. Other (Existing)
   { header: "OTHER" },
-  // { title: "Service", href: "/service", icon: "bi bi-hammer" },
-  // { title: "Newsletter", href: "/newsletter", icon: "bi bi-envelope-paper" },
-  // { title: "Testimonial", href: "/testimonial", icon: "bi bi-chat-quote" },
-  { title: "Contact", href: "", icon: "bi bi-calendar-event" },//contact
-  // { title: "Message", href: "/message", icon: "bi bi-chat-dots" },
+  { title: "Service", href: "/service", icon: "bi bi-hammer" },
+  { title: "Newsletter", href: "/newsletter", icon: "bi bi-envelope-paper" },
+  { title: "Testimonial", href: "/testimonial", icon: "bi bi-chat-quote" },
+  { title: "Contact", href: "/contact", icon: "bi bi-calendar-event" },
+  { title: "Message", href: "/message", icon: "bi bi-chat-dots" },
 
   // 8. Settings
   { header: "SETTINGS" },
-  // { title: "Settings", href: "/settings", icon: "bi bi-wrench" },
-  // { title: "Languages", href: "/languages", icon: "bi bi-translate" },
-  // { title: "Email Settings", href: "/email-settings", icon: "bi bi-envelope" },
-  // { title: "Faq", href: "/faq", icon: "bi bi-question-circle" },
-  // { title: "Page Settings", href: "/pages-list", icon: "bi bi-file-earmark-text" },
-  //
+  { title: "Settings", href: "/settings", icon: "bi bi-wrench" },
+  { title: "Languages", href: "/languages", icon: "bi bi-translate" },
+  { title: "Email Settings", href: "/email-settings", icon: "bi bi-envelope" },
+  { title: "Faq", href: "/faq", icon: "bi bi-question-circle" },
+  { title: "Page Settings", href: "/pages-list", icon: "bi bi-file-earmark-text" },
+  
   { title: "Log Report", href: "", icon: "bi bi-journal-text" }, //log-report
 ];
 
@@ -91,7 +91,7 @@ export default function Sidebar({ showMobilemenu }) {
       <div className="d-flex align-items-center mb-4 px-2">
         <Link href="/" className="text-decoration-none">
           <span style={{ color: COLOR, fontWeight: "bold", fontSize: "1.5rem" }}>
-            Lawstick
+            Lawstick 
           </span>
         </Link>
 
