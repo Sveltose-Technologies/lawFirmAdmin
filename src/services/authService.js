@@ -448,79 +448,78 @@ const authService = {
   // [GET ALL] - FETCH ALL CAPABILITY CATEGORIES
  // services/authService.js
 
-getAllCapabilityCategories: async () => {
-  try {
-    console.log("📢 Calling GET /capability-categories/get-all");
-
-    const res = await api.get("/capability-categories/get-all");
-
-    console.log("✅ Full API Response:", res);
-    console.log("✅ Response Data:", res.data);
-
-    return {
-      success: true,
-      data: res.data.data || res.data,
-    };
-  } catch (err) {
-    console.error("❌ API Error:", err.response || err);
-    return {
-      success: false,
-      message: "Failed to fetch categories",
-    };
-  }
-},
-
-  // [CREATE] - ADD NEW CAPABILITY CATEGORY
-  createCapabilityCategory: async (categoryData) => {
+ getAllCapabilityCategories: async () => {
     try {
-      const user = authService.getCurrentUser();
-      const adminId = user?.id || 3;
-
-      const formData = new FormData();
-      formData.append("adminId", adminId);
-      formData.append("categoryName", categoryData.categoryName);
-      formData.append("description", categoryData.description);
-      
-      if (categoryData.bannerImage) {
-        formData.append("bannerImage", categoryData.bannerImage);
-      }
-
-      const res = await api.post("/capability-categories/create", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      return { success: true, data: res.data };
-    } catch (err) {
-      return { success: false, message: err.response?.data?.message || "Create failed" };
+      console.log("📢 Sending GET request to /capability-categories/get-all");
+      const response = await api.get("/capability-categories/get-all");
+      console.log("✅ GET ALL CATEGORIES RESPONSE:", response.data);
+      return response.data; // सीधा डेटा रिटर्न करें
+    } catch (error) {
+      console.error("❌ GET ALL API Error:", error);
+      return { success: false, data: [] };
     }
   },
 
-  // [UPDATE] - EDIT CAPABILITY CATEGORY
-  updateCapabilityCategory: async (id, categoryData) => {
+  // [CREATE] - CAPABILITY CATEGORY
+  createCapabilityCategory: async (data) => {
     try {
+      console.log("📢 Sending CREATE request with data:", data);
+
       const formData = new FormData();
-      formData.append("categoryName", categoryData.categoryName);
-      formData.append("description", categoryData.description);
-      
-      if (categoryData.bannerImage instanceof File) {
-        formData.append("bannerImage", categoryData.bannerImage);
+      formData.append("categoryName", data.categoryName);
+      formData.append("description", data.description || "");
+
+      if (data.bannerImage) {
+        formData.append("bannerImage", data.bannerImage);
       }
 
-      const res = await api.put(`/capability-categories/update/${id}`, formData, {
+      const response = await api.post("/capability-categories/create", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      return { success: true, data: res.data };
-    } catch (err) {
-      return { success: false, message: "Update failed" };
+
+      console.log("✅ CREATE CATEGORY RESPONSE:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("❌ CREATE API Error:", error);
+      return { success: false, message: error.message };
     }
   },
 
-  // [DELETE] - DELETE CAPABILITY CATEGORY
+  // [UPDATE] - CAPABILITY CATEGORY
+  updateCapabilityCategory: async (id, data) => {
+    try {
+      console.log(`📢 Sending UPDATE request for ID: ${id} with data:`, data);
+
+      const formData = new FormData();
+      formData.append("categoryName", data.categoryName);
+      formData.append("description", data.description || "");
+
+      if (data.bannerImage) {
+        formData.append("bannerImage", data.bannerImage);
+      }
+
+      const response = await api.put(`/capability-categories/update/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      console.log("🟡 UPDATE CATEGORY RESPONSE:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("❌ UPDATE API Error:", error);
+      return { success: false, message: error.message };
+    }
+  },
+
+  // [DELETE] - CAPABILITY CATEGORY
   deleteCapabilityCategory: async (id) => {
     try {
-      const res = await api.delete(`/capability-categories/delete/${id}`);
-      return { success: true, data: res.data };
-    } catch (err) {
-      return { success: false, message: "Delete failed" };
+      console.log(`📢 Sending DELETE request for ID: ${id}`);
+      const response = await api.delete(`/capability-categories/delete/${id}`);
+      console.log("🔴 DELETE CATEGORY RESPONSE:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("❌ DELETE API Error:", error);
+      return { success: false, message: error.message };
     }
   },
 
@@ -528,7 +527,6 @@ getAllCapabilityCategories: async () => {
 // SECTION: CAPABILITY SUBCATEGORIES API
 // ==========================================
 
-// [GET ALL] - FETCH ALL SUBCATEGORIES
 
 // [GET ALL] - FETCH ALL SUBCATEGORIES
 getAllCapabilitySubCategories: async () => {
