@@ -449,56 +449,78 @@
 // };
 
 // export default Clients;
-
-
 "use client";
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  CardBody,
-  Table,
-  Input
-} from "reactstrap";
+import { Card, CardBody, Table, Input, Button } from "reactstrap";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import authService from "../../../services/authService";
+import PaginationComponent from "../../../context/Pagination";
 
 const Clients = () => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  
+  // Pagination States
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
-  // Fetch clients and attorneys
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await authService.getAllUsers();
-        if (res.success) {
-          const data = res.data || [];
-          console.log("All users data:", data);
 
-          // Include clients and attorneys, exclude admins
-          const filteredUsers = data.users.filter(
-            u => u.role.toLowerCase() === "client" || u.role.toLowerCase() === "attorney"
-          );
-          console.log("Filtered clients & attorneys:", filteredUsers);
-
-          setUsers(filteredUsers);
-        } else {
-          toast.error(res.message || "Failed to load users");
-        }
-      } catch (err) {
-        console.error("Error fetching users:", err);
-        toast.error("Something went wrong while fetching users");
+  const fetchUsers = async () => {
+    try {
+      console.log("Fetching client data...");
+      const res = await authService.getAllUsers();
+      
+      if (res.success) {
+        // API response में से डेटा निकालें
+        const allData = res.data?.users || res.data || [];
+        
+        // फिल्टर: सिर्फ 'client' रोल वाले यूजर्स दिखाएँ
+        const clientsOnly = allData.filter(u => u.role?.toLowerCase() === "client");
+        
+        console.log("Filtered Clients:", clientsOnly);
+        setUsers(clientsOnly);
+      } else {
+        toast.error(res.message || "Failed to load clients");
       }
-    };
-
+    } catch (err) {
+      console.error("Error fetching users:", err);
+      toast.error("Something went wrong while fetching clients");
+    }
+  };
+ 
     fetchUsers();
   }, []);
 
-  // Filter users by search term
+  // Delete Function
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this client?")) {
+      try {
+        const res = await authService.deleteUser(id);
+        if (res.success) {
+          toast.success("Client deleted successfully");
+          setUsers(users.filter(u => u.id !== id));
+        } else {
+          toast.error(res.message || "Delete failed");
+        }
+      } catch (err) {
+        toast.error("Error deleting client");
+      }
+    }
+  };
+
+  // Search Logic (Name or Email)
   const filteredData = users.filter(u =>
-    u.firstName?.toLowerCase().includes(searchTerm.toLowerCase())
+    `${u.firstName} ${u.lastName} ${u.email}`
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
   );
+
+  // Pagination Logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
 
   const GOLD = "#eebb5d";
 
@@ -509,21 +531,22 @@ const Clients = () => {
       <Card className="mb-4 border-0 shadow-sm">
         <CardBody className="p-3">
           <h5 className="mb-0 fw-bold" style={{ color: GOLD }}>
-            Clients & Attorneys
+            Client Management
           </h5>
         </CardBody>
       </Card>
 
       <Card className="border-0 shadow-sm">
         <CardBody className="p-4">
-          <div className="d-flex flex-column flex-sm-row justify-content-between mb-4 gap-3">
-            <div className="w-100" style={{ maxWidth: "300px" }}>
-              <Input
-                placeholder="Search by name..."
-                className="rounded-pill"
-                onChange={e => setSearchTerm(e.target.value)}
-              />
-            </div>
+          <div className="mb-4" style={{ maxWidth: "350px" }}>
+            <Input
+              placeholder="Search by name or email..."
+              className="rounded-pill"
+              onChange={e => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1); // सर्च करने पर पहले पेज पर जाएँ
+              }}
+            />
           </div>
 
           <Table responsive className="align-middle text-nowrap">
@@ -532,22 +555,49 @@ const Clients = () => {
                 <th>Name</th>
                 <th>Email</th>
                 <th>Phone</th>
-                <th>Address</th>
-                <th>Role</th> {/* Added role column */}
+                <th>City</th>
+                <th className="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
-              {filteredData.map(u => (
-                <tr key={u.id}>
-                  <td>{u.firstName} {u.lastName}</td>
-                  <td>{u.email}</td>
-                  <td>{u.mobile || "-"}</td>
-                  <td>{u.city || "-"}</td>
-                  <td>{u.role.charAt(0).toUpperCase() + u.role.slice(1)}</td>
+              {currentItems.length > 0 ? (
+                currentItems.map(u => (
+                  <tr key={u.id}>
+                    <td>
+                      <span className="fw-bold">{u.firstName} {u.lastName}</span>
+                    </td>
+                    <td>{u.email}</td>
+                    <td>{u.mobile || "-"}</td>
+                    <td>{u.city || "-"}</td>
+                    <td className="text-center">
+                      <Button 
+                        color="danger" 
+                        size="sm" 
+                        outline 
+                        onClick={() => handleDelete(u.id)}
+                      >
+                        Delete
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="text-center py-4 text-muted">
+                    No clients found.
+                  </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </Table>
+
+          {/* Pagination Component */}
+          <PaginationComponent
+            totalItems={filteredData.length}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
         </CardBody>
       </Card>
     </div>

@@ -24,6 +24,10 @@ const navigation = [
   { title: "Our Cases", href: "/our-cases", icon: "bi bi-briefcase" },
   { title: "Case Category", href: "/case-category", icon: "bi bi-grid" },
   { title: "Case Type", href: "/case-type", icon: "bi bi-tags" },
+    { title: "Capabilities Category", href: "/capabilities-category", icon: "bi bi-tags" },
+    
+        { title: "Capabilities Subcategory", href: "/capabilities-subcategory", icon: "bi bi-tags" },
+
   { title: "Case Documents", href: "/case-documents", icon: "bi bi-file-earmark-text" },
   { title: "Case Activity Logs", href: "/case-activity-logs", icon: "bi bi-clock-history" },
   { title: "Daily Hearing", href: "/daily-hearing", icon: "bi bi-hammer" },

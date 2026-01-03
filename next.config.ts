@@ -2,12 +2,19 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* Hostinger Deployment Settings */
-  output: 'export',
+  output: 'export', // स्टेटिक वेबसाइट के लिए
   images: {
-    unoptimized: true,
+    unoptimized: true, // स्टेटिक एक्सपोर्ट के लिए ज़रूरी
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'nodejs.nrislawfirm.com',
+        pathname: '/**', 
+      },
+    ],
   },
   
-  /* React Compiler hata diya hai taaki build error na aaye */
+ 
 };
 
 export default nextConfig;
