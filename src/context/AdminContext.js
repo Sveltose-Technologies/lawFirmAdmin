@@ -1,32 +1,90 @@
+// "use client";
+// import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+// import authService from "../services/authService";
+
+// const AdminContext = createContext();
+
+// export const AdminProvider = ({ children }) => {
+//   const [admin, setAdmin] = useState(null);
+  
+
+
+//   const loadAdmin = useCallback(async () => {
+//     try {
+//       const res = await api.get("/admin/getall-adminprofile");
+//       const data = res.data;
+
+//       if (data) {
+//         // इमेज पाथ को क्लीन और फुल URL बनाना
+//         const fullProfilePath = data.profileImage 
+//           ? `${baseURL}${data.profileImage.replace(/^\//, "")}` 
+//           : null;
+        
+//         const fullLogoPath = data.websiteLogo 
+//           ? `${baseURL}${data.websiteLogo.replace(/^\//, "")}` 
+//           : null;
+
+//         console.log("Admin Data Loaded:", data);
+//         console.log("Profile Image URL:", fullProfilePath);
+
+//         setAdmin({
+//           ...data,
+//           profileImage: fullProfilePath,
+//           websiteLogo: fullLogoPath,
+//         });
+//       }
+//     } catch (err) {
+//       console.error("Failed to load admin context:", err);
+//     }
+//   }, []);
+
+//   useEffect(() => {
+//     loadAdmin();
+//   }, [loadAdmin]);
+
+//   return (
+//     <AdminContext.Provider value={{ admin, setAdmin, loadAdmin }}>
+//       {children}
+//     </AdminContext.Provider>
+//   );
+// };
+
+// export const useAdmin = () => useContext(AdminContext);
+
+
 "use client";
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
-import api from "@/services/api";
+import authService from "../services/authService"; // authService ko import karein
+import api from "../services/api"; 
 
 const AdminContext = createContext();
 
 export const AdminProvider = ({ children }) => {
   const [admin, setAdmin] = useState(null);
-  
-  // अगर 404 आ रहा है, तो BASE_URL को "https://nodejs.nrislawfirm.com/api/" करके भी देख सकते हैं
-  const BASE_URL = "https://nodejs.nrislawfirm.com/"; 
+
+
+  const baseURL = authService.IMG_URL.endsWith("/") 
+    ? authService.IMG_URL 
+    : `${authService.IMG_URL}/`;
 
   const loadAdmin = useCallback(async () => {
     try {
+      // API call to get profile
       const res = await api.get("/admin/getall-adminprofile");
-      const data = res.data;
+     
+      const data = Array.isArray(res.data) ? res.data[0] : res.data;
 
       if (data) {
-        // इमेज पाथ को क्लीन और फुल URL बनाना
+      
         const fullProfilePath = data.profileImage 
-          ? `${BASE_URL}${data.profileImage.replace(/^\//, "")}` 
+          ? `${baseURL}${data.profileImage.replace(/^\//, "")}` 
           : null;
         
         const fullLogoPath = data.websiteLogo 
-          ? `${BASE_URL}${data.websiteLogo.replace(/^\//, "")}` 
+          ? `${baseURL}${data.websiteLogo.replace(/^\//, "")}` 
           : null;
 
-        console.log("Admin Data Loaded:", data);
-        console.log("Profile Image URL:", fullProfilePath);
+        console.log("✅ Admin Data Loaded into Context:", data);
 
         setAdmin({
           ...data,
@@ -35,9 +93,9 @@ export const AdminProvider = ({ children }) => {
         });
       }
     } catch (err) {
-      console.error("Failed to load admin context:", err);
+      console.error("❌ Failed to load admin context:", err);
     }
-  }, []);
+  }, [baseURL]);
 
   useEffect(() => {
     loadAdmin();

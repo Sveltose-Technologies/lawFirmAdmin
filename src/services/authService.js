@@ -315,6 +315,29 @@
 import api from "./api";
 
 const authService = {
+  // Base URL for Images
+  IMG_URL: "http://72.62.87.252:3000", 
+
+  // ==========================================
+  // HELPER: GET FULL IMAGE URL
+  // ==========================================
+  getImgUrl: (path) => {
+    if (!path) return "https://via.placeholder.com/150";
+    
+    // Agar path already full URL hai (http se shuru ho raha hai)
+    if (path.startsWith("http")) return path;
+
+    // Path ke aage se '/' hatayein agar hai toh, double slash se bachne ke liye
+    const cleanPath = path.startsWith("/") ? path.substring(1) : path;
+
+    const fullUrl = `${authService.IMG_URL}/${cleanPath}`;
+    
+    // Console log debugging ke liye (Ise baad mein hata sakte hain)
+    // console.log("🖼️ Image Loading From:", fullUrl);
+    
+    return fullUrl;
+  },
+
 
   // ==========================================
   // SECTION: AUTHENTICATION
@@ -351,6 +374,37 @@ const authService = {
     if (typeof window !== "undefined") {
       localStorage.clear();
       window.location.href = "/login";
+    }
+  },
+
+
+  // ==========================================
+  // SECTION: ADMIN PROFILE
+  // ==========================================
+
+  getAdminProfile: async () => {
+    try {
+      console.log("📢 Fetching Admin Profile...");
+      const res = await api.get("/admin/getall-adminprofile");
+      console.log("✅ Admin Profile Data:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Get Admin Profile Error:", err);
+      return { success: false, message: "Failed to fetch profile" };
+    }
+  },
+
+  updateAdminProfile: async (id, formData) => {
+    try {
+      console.log(`📢 Updating Admin ID: ${id}`);
+      const res = await api.put(`/admin/update/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("✅ Update Success:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Update Error:", err);
+      return { success: false, message: err.response?.data?.message || "Update failed" };
     }
   },
 
@@ -594,6 +648,507 @@ deleteCapabilitySubCategory: async (id) => {
     return { success: false, message: "Delete failed" };
   }
 },
-};
 
+// ==========================================
+  // SECTION: LOCATION COUNTRY
+  // ==========================================
+
+  // [GET ALL] - FETCH ALL COUNTRIES
+  getAllCountries: async () => {
+    try {
+      console.log("📢 Fetching all countries...");
+      const res = await api.get("/location-country/getall");
+      console.log("✅ Get All Countries Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Get All Countries Error:", err);
+      return { success: false, message: "Failed to fetch countries" };
+    }
+  },
+
+  // [CREATE] - ADD NEW COUNTRY
+  createCountry: async (countryData) => {
+    try {
+      const user = authService.getCurrentUser();
+      const payload = { 
+        ...countryData, 
+        adminId: user?.id || 1 
+      };
+      console.log("📢 Creating Country with payload:", payload);
+      const res = await api.post("/location-country/create", payload);
+      console.log("✅ Create Country Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Create Country Error:", err);
+      return { success: false, message: "Failed to create country" };
+    }
+  },
+
+  // [UPDATE] - EDIT COUNTRY
+  updateCountry: async (id, countryData) => {
+    try {
+      console.log(`📢 Updating Country ID: ${id} with:`, countryData);
+      const res = await api.put(`/location-country/update/${id}`, countryData);
+      console.log("✅ Update Country Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Update Country Error:", err);
+      return { success: false, message: "Update failed" };
+    }
+  },
+
+  // [DELETE] - DELETE COUNTRY
+  deleteCountry: async (id) => {
+    try {
+      console.log(`📢 Deleting Country ID: ${id}`);
+      const res = await api.delete(`/location-country/delete/${id}`);
+      console.log("✅ Delete Country Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Delete Country Error:", err);
+      return { success: false, message: "Delete failed" };
+    }
+  },
+
+
+  // ==========================================
+  // SECTION: LOCATION CITY (Multipart/Form-Data for Image)
+  // ==========================================
+
+  // [GET ALL] - FETCH ALL CITIES
+  getAllCities: async (countryId = null) => {
+    try {
+      // Agar countryId pass ki hai toh filter query lagayenge
+      const url = countryId ? `/location-city/getall?countryId=${countryId}` : "/location-city/getall";
+      console.log(`📢 Fetching cities. URL: ${url}`);
+      const res = await api.get(url);
+      console.log("✅ Get All Cities Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Get Cities Error:", err);
+      return { success: false, message: "Failed to fetch cities" };
+    }
+  },
+
+  // [CREATE] - ADD NEW CITY
+  createCity: async (cityData) => {
+    try {
+      const user = authService.getCurrentUser();
+      const formData = new FormData();
+      formData.append("adminId", user?.id || 1);
+      formData.append("countryId", cityData.countryId);
+      formData.append("cityName", cityData.cityName);
+      formData.append("address", cityData.address);
+      formData.append("phoneNo", cityData.phoneNo);
+      formData.append("faxNo", cityData.faxNo);
+      
+      if (cityData.image) {
+        formData.append("image", cityData.image);
+      }
+
+      console.log("📢 Creating City (FormData)...");
+      const res = await api.post("/location-city/create", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("✅ Create City Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Create City Error:", err);
+      return { success: false, message: "Create city failed" };
+    }
+  },
+
+  // [UPDATE] - EDIT CITY
+  updateCity: async (id, cityData) => {
+    try {
+      const formData = new FormData();
+      formData.append("countryId", cityData.countryId);
+      formData.append("cityName", cityData.cityName);
+      formData.append("address", cityData.address);
+      formData.append("phoneNo", cityData.phoneNo);
+      formData.append("faxNo", cityData.faxNo);
+      
+      if (cityData.image instanceof File) {
+        formData.append("image", cityData.image);
+      }
+
+      console.log(`📢 Updating City ID: ${id}...`);
+      const res = await api.put(`/location-city/update/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("✅ Update City Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Update City Error:", err);
+      return { success: false, message: "Update city failed" };
+    }
+  },
+
+  // [DELETE] - DELETE CITY
+  deleteCity: async (id) => {
+    try {
+      console.log(`📢 Deleting City ID: ${id}`);
+      const res = await api.delete(`/location-city/delete/${id}`);
+      console.log("✅ Delete City Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Delete City Error:", err);
+      return { success: false, message: "Delete city failed" };
+    }
+  },
+
+
+  // ==========================================
+  // SECTION: LOCATION CMS
+  // ==========================================
+
+  // [GET ALL] - FETCH ALL CMS CONTENT
+  getAllLocationCMS: async () => {
+    try {
+      console.log("📢 Fetching all Location CMS...");
+      const res = await api.get("/location-cms/getall");
+      console.log("✅ Get All CMS Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Get CMS Error:", err);
+      return { success: false, message: "Failed to fetch CMS" };
+    }
+  },
+
+  // [CREATE] - ADD NEW CMS CONTENT
+  createLocationCMS: async (cmsData) => {
+    try {
+      const user = authService.getCurrentUser();
+      const payload = { 
+        ...cmsData, 
+        adminId: user?.id || 1 
+      };
+      console.log("📢 Creating CMS with payload:", payload);
+      const res = await api.post("/location-cms/create", payload);
+      console.log("✅ Create CMS Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Create CMS Error:", err);
+      return { success: false, message: "Create CMS failed" };
+    }
+  },
+
+  // [UPDATE] - EDIT CMS CONTENT
+  updateLocationCMS: async (id, cmsData) => {
+    try {
+      console.log(`📢 Updating CMS ID: ${id} with:`, cmsData);
+      const res = await api.put(`/location-cms/update/${id}`, cmsData);
+      console.log("✅ Update CMS Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Update CMS Error:", err);
+      return { success: false, message: "Update CMS failed" };
+    }
+  },
+
+  // [DELETE] - DELETE CMS CONTENT
+  deleteLocationCMS: async (id) => {
+    try {
+      console.log(`📢 Deleting CMS ID: ${id}`);
+      const res = await api.delete(`/location-cms/delete/${id}`);
+      console.log("✅ Delete CMS Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Delete CMS Error:", err);
+      return { success: false, message: "Delete CMS failed" };
+    }
+  },
+
+  getAllOurFirm: async () => {
+    try {
+      console.log("📢 Fetching Our Firm data...");
+      const res = await api.get("/ourfirm/getall");
+      console.log("✅ Get Our Firm Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Get Our Firm Error:", err);
+      return { success: false, message: "Fetch failed" };
+    }
+  },
+
+  createOurFirm: async (formData) => {
+    try {
+      console.log("📢 Creating Our Firm entry...");
+      // FormData console log helper
+      for (let pair of formData.entries()) { console.log(pair[0] + ': ' + pair[1]); }
+      
+      const res = await api.post("/ourfirm/create", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("✅ Create Our Firm Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Create Our Firm Error:", err);
+      return { success: false, message: "Create failed" };
+    }
+  },
+
+  updateOurFirm: async (id, formData) => {
+    try {
+      console.log(`📢 Updating Our Firm ID: ${id}`);
+      const res = await api.put(`/ourfirm/update/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("✅ Update Our Firm Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Update Our Firm Error:", err);
+      return { success: false, message: "Update failed" };
+    }
+  },
+
+  deleteOurFirm: async (id) => {
+    try {
+      console.log(`📢 Deleting Our Firm ID: ${id}`);
+      const res = await api.delete(`/ourfirm/delete/${id}`);
+      console.log("✅ Delete Our Firm Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Delete Our Firm Error:", err);
+      return { success: false, message: "Delete failed" };
+    }
+  },
+
+
+  // ==========================================
+  // SECTION: AWARDS (About Us)
+  // ==========================================
+
+  getAllAwards: async () => {
+    try {
+      console.log("📢 Fetching all awards...");
+      const res = await api.get("/award/getall");
+      console.log("✅ Get Awards Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Get Awards Error:", err);
+      return { success: false, message: "Fetch failed" };
+    }
+  },
+
+  createAward: async (formData) => {
+    try {
+      console.log("📢 Creating New Award...");
+      const res = await api.post("/award/create", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("✅ Create Award Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      return { success: false, message: "Create failed" };
+    }
+  },
+
+  updateAward: async (id, formData) => {
+    try {
+      console.log(`📢 Updating Award ID: ${id}`);
+      const res = await api.put(`/award/update/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("✅ Update Award Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      return { success: false, message: "Update failed" };
+    }
+  },
+
+  deleteAward: async (id) => {
+    try {
+      console.log(`📢 Deleting Award ID: ${id}`);
+      const res = await api.delete(`/award/delete/${id}`);
+      console.log("✅ Delete Award Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      return { success: false, message: "Delete failed" };
+    }
+  },
+// ==========================================
+  // SECTION: PROMOTER (About Us)
+  // ==========================================
+
+  getAllPromoters: async () => {
+    try {
+      console.log("📢 Fetching all promoters...");
+      const res = await api.get("/promoter/getall");
+      console.log("✅ Get Promoters Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Get Promoters Error:", err);
+      return { success: false, message: "Fetch failed" };
+    }
+  },
+
+  createPromoter: async (formData) => {
+    try {
+      console.log("📢 Creating New Promoter...");
+      const res = await api.post("/promoter/create", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("✅ Create Promoter Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Create Promoter Error:", err);
+      return { success: false, message: "Create failed" };
+    }
+  },
+
+  updatePromoter: async (id, formData) => {
+    try {
+      console.log(`📢 Updating Promoter ID: ${id}`);
+      const res = await api.put(`/promoter/update/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("✅ Update Promoter Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Update Promoter Error:", err);
+      return { success: false, message: "Update failed" };
+    }
+  },
+
+  deletePromoter: async (id) => {
+    try {
+      console.log(`📢 Deleting Promoter ID: ${id}`);
+      const res = await api.delete(`/promoter/delete/${id}`);
+      console.log("✅ Delete Promoter Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Delete Promoter Error:", err);
+      return { success: false, message: "Delete failed" };
+    }
+},
+
+// SECTION: TERMS & CONDITIONS 
+ getAllTerms: async () => {
+  try {
+    console.log("📢 Fetching all Terms & Conditions...");
+    const res = await api.get("/terms-condition/getall");
+    console.log("✅ Get Terms Response:", res.data);
+    return { success: true, data: res.data };
+  } catch (err) {
+    console.error("❌ Get Terms Error:", err);
+    return { success: false, message: "Fetch failed" };
+  }
+},
+
+  createTerm: async (data) => {
+    try {
+      const user = authService.getCurrentUser();
+      const payload = { ...data, adminId: user?.id || 3 };
+      const res = await api.post("/terms-condition/create", payload);
+      return { success: true, data: res.data };
+    } catch (err) {
+      return { success: false, message: "Create failed" };
+    }
+  },
+
+  updateTerm: async (id, data) => {
+    try {
+      const res = await api.put(`/terms-condition/update/${id}`, data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      return { success: false, message: "Update failed" };
+    }
+  },
+
+  deleteTerm: async (id) => {
+    try {
+      const res = await api.delete(`/terms-condition/delete/${id}`);
+      return { success: true, data: res.data };
+    } catch (err) {
+      return { success: false, message: "Delete failed" };
+    }
+  },
+
+
+  getCurrentUser: () => {
+    if (typeof window !== "undefined") {
+      const user = localStorage.getItem("user");
+      return user ? JSON.parse(user) : null;
+    }
+    return null;
+  },
+
+  IMG_URL: "http://72.62.87.252:3000",
+
+  getImgUrl: (path) => {
+    if (!path) return "https://via.placeholder.com/150";
+    const cleanPath = path.startsWith("/") ? path.substring(1) : path;
+    return `${authService.IMG_URL}/${cleanPath}`;
+  },
+
+  // =========================
+  // PRIVACY POLICY
+  // =========================
+  getAllPrivacyPolicies: async () => {
+    try {
+      console.log("📢 Fetching all Privacy Policies...");
+      const res = await api.get("/privacy-policy/getall");
+      console.log("✅ Get Privacy Policy Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Get Privacy Policy Error:", err);
+      return { success: false, message: "Fetch failed" };
+    }
+  },
+
+  createPrivacyPolicy: async (data) => {
+    try {
+      const user = authService.getCurrentUser();
+      const payload = { ...data, adminId: user?.id || 3 };
+      console.log("📢 Creating Privacy Policy:", payload);
+      const res = await api.post("/privacy-policy/create", payload);
+      console.log("✅ Create Privacy Policy Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Create Privacy Policy Error:", err);
+      return { success: false, message: "Create failed" };
+    }
+  },
+
+  updatePrivacyPolicy: async (id, data) => {
+    try {
+      console.log(`📢 Updating Privacy Policy ID: ${id}`, data);
+      const res = await api.put(`/privacy-policy/update/${id}`, data);
+      console.log("✅ Update Privacy Policy Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Update Privacy Policy Error:", err);
+      return { success: false, message: "Update failed" };
+    }
+  },
+
+  deletePrivacyPolicy: async (id) => {
+    try {
+      console.log(`📢 Deleting Privacy Policy ID: ${id}`);
+      const res = await api.delete(`/privacy-policy/delete/${id}`);
+      console.log("✅ Delete Privacy Policy Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Delete Privacy Policy Error:", err);
+      return { success: false, message: "Delete failed" };
+    }
+  },
+
+  // ==========================================
+  // SECTION: CONTACT US (Leads Management)
+  // ==========================================
+
+  getAllContacts: async () => {
+    try {
+      console.log("📢 Fetching all Contact inquiries...");
+      const res = await api.get("/contact/getall");
+      console.log("✅ Get Contact Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Get Contact Error:", err);
+      return { success: false, message: "Fetch failed" };
+    }
+  },
+}
 export default authService;

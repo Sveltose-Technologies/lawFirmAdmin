@@ -1,31 +1,114 @@
+// import React from "react";
+// import { Pagination, PaginationItem, PaginationLink } from "reactstrap";
+
+// const PaginationComponent = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => {
+//   const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+//   if (totalPages <= 1) return null; // अगर सिर्फ 1 पेज है तो कुछ न दिखाएं
+
+//   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+//   return (
+//     <Pagination aria-label="Page navigation" className="d-flex justify-content-end mt-3">
+//       <PaginationItem disabled={currentPage === 1}>
+//         <PaginationLink previous onClick={() => onPageChange(currentPage - 1)} />
+//       </PaginationItem>
+      
+//       {pages.map((page) => (
+//         <PaginationItem active={page === currentPage} key={page}>
+//           <PaginationLink onClick={() => onPageChange(page)}>
+//             {page}
+//           </PaginationLink>
+//         </PaginationItem>
+//       ))}
+
+//       <PaginationItem disabled={currentPage === totalPages}>
+//         <PaginationLink next onClick={() => onPageChange(currentPage + 1)} />
+//       </PaginationItem>
+//     </Pagination>
+//   );
+// };
+
+// export default PaginationComponent;
+
+
 import React from "react";
 import { Pagination, PaginationItem, PaginationLink } from "reactstrap";
 
 const PaginationComponent = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => {
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-  if (totalPages <= 1) return null; // अगर सिर्फ 1 पेज है तो कुछ न दिखाएं
-
+  const GOLD = "#eebb5d";
+  const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <Pagination aria-label="Page navigation" className="d-flex justify-content-end mt-3">
-      <PaginationItem disabled={currentPage === 1}>
-        <PaginationLink previous onClick={() => onPageChange(currentPage - 1)} />
-      </PaginationItem>
+    <div className="d-flex justify-content-between align-items-center mt-3 w-100">
       
-      {pages.map((page) => (
-        <PaginationItem active={page === currentPage} key={page}>
-          <PaginationLink onClick={() => onPageChange(page)}>
-            {page}
+      {/* 1. Left Side: Simple Text (No Box) */}
+      <div className="text-muted small">
+        Showing Page <b>{currentPage}</b> of <b>{totalPages}</b> (Total <b>{totalItems}</b> Records)
+      </div>
+
+      {/* 2. Right Side: Clean Navigation */}
+      <Pagination aria-label="Page navigation" className="mb-0">
+        
+        {/* First Button */}
+        <PaginationItem disabled={currentPage === 1}>
+          <PaginationLink 
+            first 
+            onClick={() => onPageChange(1)} 
+            className="border-0 bg-transparent text-dark"
+          />
+        </PaginationItem>
+
+        {/* Previous Button (Single Arrow) */}
+        <PaginationItem disabled={currentPage === 1}>
+          <PaginationLink 
+            onClick={() => onPageChange(currentPage - 1)}
+            className="border-0 bg-transparent text-dark"
+          >
+            <span aria-hidden="true">‹</span>
           </PaginationLink>
         </PaginationItem>
-      ))}
+        
+        {/* Page Numbers */}
+        {pages.map((page) => (
+          <PaginationItem active={page === currentPage} key={page} className="mx-1">
+            <PaginationLink 
+                onClick={() => onPageChange(page)}
+                style={{
+                  borderRadius: '5px',
+                  border: 'none',
+                  backgroundColor: page === currentPage ? GOLD : 'transparent',
+                  color: page === currentPage ? '#fff' : '#333',
+                  padding: '5px 12px'
+                }}
+            >
+              {page}
+            </PaginationLink>
+          </PaginationItem>
+        ))}
 
-      <PaginationItem disabled={currentPage === totalPages}>
-        <PaginationLink next onClick={() => onPageChange(currentPage + 1)} />
-      </PaginationItem>
-    </Pagination>
+        {/* Next Button (Single Arrow) */}
+        <PaginationItem disabled={currentPage === totalPages}>
+          <PaginationLink 
+            onClick={() => onPageChange(currentPage + 1)}
+            className="border-0 bg-transparent text-dark"
+          >
+            <span aria-hidden="true">›</span>
+          </PaginationLink>
+        </PaginationItem>
+
+        {/* Last Button */}
+        <PaginationItem disabled={currentPage === totalPages}>
+          <PaginationLink 
+            last 
+            onClick={() => onPageChange(totalPages)} 
+            className="border-0 bg-transparent text-dark"
+          />
+        </PaginationItem>
+
+      </Pagination>
+    </div>
   );
 };
 

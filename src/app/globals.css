@@ -1,0 +1,78 @@
+:root {
+  --gold-color: #eebb5d;
+  --text-dark: #333333;
+  --text-muted: #6c757d;
+  --font-main: 14px;
+  --font-heading: 18px;
+  --font-small: 12px;
+}
+
+/* Base Settings */
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: var(--font-main);
+  color: var(--text-dark);
+  background-color: #f8f9fa;
+}
+
+/* Uniform Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700 !important;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+}
+
+h4 { font-size: 20px !important; } /* Page Main Titles */
+h5 { font-size: var(--font-heading) !important; } /* Section Titles */
+
+/* Table Typography */
+table thead th {
+  font-size: var(--font-small);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background-color: #fdf8ef !important; /* Light Gold Tint */
+  border: none !important;
+}
+
+table tbody td {
+  font-size: var(--font-main);
+  color: var(--text-dark);
+  padding: 12px 8px !important;
+}
+
+/* Global Input/Search Styling */
+.form-control {
+  font-size: var(--font-main) !important;
+  border-radius: 8px !important;
+  padding: 8px 15px;
+}
+
+/* THE GLOBAL GOLD BUTTON */
+.btn-gold {
+  background-color: var(--gold-color) !important;
+  border: none !important;
+  color: #fff !important;
+  font-size: var(--font-main) !important;
+  font-weight: 600 !important;
+  padding: 8px 20px !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-gold:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Responsive Rules */
+@media (max-width: 768px) {
+  h4 { font-size: 18px !important; }
+  .btn-gold { width: 100%; } /* Mobile par buttons full width */
+  .p-4 { padding: 1.5rem !important; }
+}

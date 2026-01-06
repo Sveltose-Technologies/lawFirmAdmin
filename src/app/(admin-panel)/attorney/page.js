@@ -578,6 +578,165 @@
 // export default Attorney;
 
 
+// "use client";
+// import React, { useEffect, useState } from "react";
+// import { Card, CardBody, Table, Input, Button } from "reactstrap";
+// import { ToastContainer, toast } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
+// import authService from "../../../services/authService";
+// import PaginationComponent from "../../../context/Pagination";
+
+// const Attorney = () => {
+//   const [attorneys, setAttorneys] = useState([]);
+//   const [searchTerm, setSearchTerm] = useState("");
+  
+//   // Pagination States
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const itemsPerPage = 5; // एक पेज पर कितने दिखाने हैं
+
+ 
+//   useEffect(() => {
+//   const fetchAttorneys = async () => {
+//     try {
+//       console.log("Fetching attorneys...");
+//       const res = await authService.getAllUsers();
+      
+//       console.log("Service Response:", res); // देखें कि success true है या false
+
+//       if (res.success) {
+//         // अगर डेटा res.data.users में है या सीधा res.data में है
+//         const allUsers = res.data?.users || res.data || [];
+//         console.log("All Users received:", allUsers);
+
+//         const attorneysData = allUsers.filter(
+//           u => u.role?.toLowerCase() === "attorney"
+//         );
+        
+//         console.log("Filtered Attorneys:", attorneysData);
+//         setAttorneys(attorneysData);
+//       } else {
+//         toast.error(res.message || "Failed to load users");
+//       }
+//     } catch (err) {
+//       console.error("Component Error:", err);
+//       toast.error("Something went wrong while fetching attorneys");
+//     }
+//   };
+ 
+//     fetchAttorneys();
+//   }, []);
+//   // Delete Attorney Function
+//   const handleDelete = async (id) => {
+//     if (window.confirm("Are you sure you want to delete this attorney?")) {
+//       try {
+//         const res = await authService.deleteUser(id);
+//         if (res.success) {
+//           toast.success("Attorney deleted successfully");
+//           // लिस्ट को अपडेट करें बिना पेज रिफ्रेश किए
+//           setAttorneys(attorneys.filter(user => user.id !== id));
+//         } else {
+//           toast.error(res.message || "Delete failed");
+//         }
+//       } catch (err) {
+//         toast.error("Error deleting attorney");
+//       }
+//     }
+//   };
+
+//   // 1. Search Logic
+//   const filteredData = attorneys.filter(u =>
+//     `${u.firstName} ${u.lastName}`
+//       .toLowerCase()
+//       .includes(searchTerm.toLowerCase())
+//   );
+
+//   // 2. Pagination Logic (Filtered डेटा में से सिर्फ वर्तमान पेज का डेटा निकालना)
+//   const indexOfLastItem = currentPage * itemsPerPage;
+//   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+//   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+
+//   const GOLD = "#eebb5d";
+
+//   return (
+//     <div className="p-3 bg-light min-vh-100">
+//       <ToastContainer />
+
+//       <Card className="mb-4 border-0 shadow-sm">
+//         <CardBody className="p-3">
+//           <h5 className="mb-0 fw-bold" style={{ color: GOLD }}>
+//             Attorneys Management
+//           </h5>
+//         </CardBody>
+//       </Card>
+
+//       <Card className="border-0 shadow-sm">
+//         <CardBody className="p-4">
+//           <div className="mb-4 d-flex justify-content-between align-items-center">
+//             <Input
+//               placeholder="Search by name..."
+//               className="rounded-pill"
+//               style={{ maxWidth: "300px" }}
+//               onChange={e => {
+//                 setSearchTerm(e.target.value);
+//                 setCurrentPage(1); // सर्च करने पर वापस पहले पेज पर जाएँ
+//               }}
+//             />
+//           </div>
+
+//           <Table responsive className="align-middle text-nowrap">
+//             <thead className="table-light">
+//               <tr>
+//                 <th>First Name</th>
+//                 <th>Last Name</th>
+//                 <th>Email</th>
+//                 <th>Phone</th>
+//                 <th>Address</th>
+//                 <th className="text-center">Action</th>
+//               </tr>
+//             </thead>
+//             <tbody>
+//               {currentItems.length > 0 ? (
+//                 currentItems.map(item => (
+//                   <tr key={item.id}>
+//                     <td>{item.firstName}</td>
+//                     <td>{item.lastName}</td>
+//                     <td>{item.email}</td>
+//                     <td>{item.mobile || "-"}</td>
+//                     <td>{item.city || "-"}</td>
+//                     <td className="text-center">
+//                       <Button 
+//                         color="danger" 
+//                         size="sm" 
+//                         outline
+//                         onClick={() => handleDelete(item.id)}
+//                       >
+//                         <i className="bi bi-trash"></i> Delete
+//                       </Button>
+//                     </td>
+//                   </tr>
+//                 ))
+//               ) : (
+//                 <tr>
+//                   <td colSpan="6" className="text-center py-4">No attorneys found.</td>
+//                 </tr>
+//               )}
+//             </tbody>
+//           </Table>
+
+//           {/* Pagination Component का इस्तेमाल */}
+//           <PaginationComponent
+//             totalItems={filteredData.length}
+//             itemsPerPage={itemsPerPage}
+//             currentPage={currentPage}
+//             onPageChange={(pageNumber) => setCurrentPage(pageNumber)}
+//           />
+//         </CardBody>
+//       </Card>
+//     </div>
+//   );
+// };
+
+// export default Attorney;
 "use client";
 import React, { useEffect, useState } from "react";
 import { Card, CardBody, Table, Input, Button } from "reactstrap";
@@ -589,51 +748,40 @@ import PaginationComponent from "../../../context/Pagination";
 const Attorney = () => {
   const [attorneys, setAttorneys] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   // Pagination States
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // एक पेज पर कितने दिखाने हैं
+  const itemsPerPage = 5;
 
- 
   useEffect(() => {
-  const fetchAttorneys = async () => {
-    try {
-      console.log("Fetching attorneys...");
-      const res = await authService.getAllUsers();
-      
-      console.log("Service Response:", res); // देखें कि success true है या false
-
-      if (res.success) {
-        // अगर डेटा res.data.users में है या सीधा res.data में है
-        const allUsers = res.data?.users || res.data || [];
-        console.log("All Users received:", allUsers);
-
-        const attorneysData = allUsers.filter(
-          u => u.role?.toLowerCase() === "attorney"
-        );
-        
-        console.log("Filtered Attorneys:", attorneysData);
-        setAttorneys(attorneysData);
-      } else {
-        toast.error(res.message || "Failed to load users");
+    const fetchAttorneys = async () => {
+      try {
+        const res = await authService.getAllUsers();
+        if (res.success) {
+          const allUsers = res.data?.users || res.data || [];
+          const attorneysData = allUsers.filter(
+            (u) => u.role?.toLowerCase() === "attorney"
+          );
+          setAttorneys(attorneysData);
+        } else {
+          toast.error(res.message || "Failed to load users");
+        }
+      } catch (err) {
+        toast.error("Something went wrong while fetching attorneys");
       }
-    } catch (err) {
-      console.error("Component Error:", err);
-      toast.error("Something went wrong while fetching attorneys");
-    }
-  };
- 
+    };
+
     fetchAttorneys();
   }, []);
-  // Delete Attorney Function
+
+  // Delete Attorney
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this attorney?")) {
       try {
         const res = await authService.deleteUser(id);
         if (res.success) {
           toast.success("Attorney deleted successfully");
-          // लिस्ट को अपडेट करें बिना पेज रिफ्रेश किए
-          setAttorneys(attorneys.filter(user => user.id !== id));
+          setAttorneys(attorneys.filter((u) => u.id !== id));
         } else {
           toast.error(res.message || "Delete failed");
         }
@@ -643,14 +791,14 @@ const Attorney = () => {
     }
   };
 
-  // 1. Search Logic
-  const filteredData = attorneys.filter(u =>
+  // 🔹 Search Logic
+  const filteredData = attorneys.filter((u) =>
     `${u.firstName} ${u.lastName}`
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
   );
 
-  // 2. Pagination Logic (Filtered डेटा में से सिर्फ वर्तमान पेज का डेटा निकालना)
+  // 🔹 Pagination Logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
@@ -671,14 +819,16 @@ const Attorney = () => {
 
       <Card className="border-0 shadow-sm">
         <CardBody className="p-4">
+          {/* 🔹 Search (same UI) */}
           <div className="mb-4 d-flex justify-content-between align-items-center">
             <Input
               placeholder="Search by name..."
               className="rounded-pill"
               style={{ maxWidth: "300px" }}
-              onChange={e => {
+              value={searchTerm}
+              onChange={(e) => {
                 setSearchTerm(e.target.value);
-                setCurrentPage(1); // सर्च करने पर वापस पहले पेज पर जाएँ
+                setCurrentPage(1);
               }}
             />
           </div>
@@ -686,6 +836,7 @@ const Attorney = () => {
           <Table responsive className="align-middle text-nowrap">
             <thead className="table-light">
               <tr>
+                <th>S.No</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Email</th>
@@ -696,34 +847,41 @@ const Attorney = () => {
             </thead>
             <tbody>
               {currentItems.length > 0 ? (
-                currentItems.map(item => (
+                currentItems.map((item, index) => (
                   <tr key={item.id}>
+                    {/* 🔹 Serial Number */}
+                    <td>
+                      {(currentPage - 1) * itemsPerPage + index + 1}
+                    </td>
                     <td>{item.firstName}</td>
                     <td>{item.lastName}</td>
                     <td>{item.email}</td>
                     <td>{item.mobile || "-"}</td>
                     <td>{item.city || "-"}</td>
                     <td className="text-center">
-                      <Button 
-                        color="danger" 
-                        size="sm" 
-                        outline
+                      {/* 🔹 Delete Icon Button */}
+                      <Button
+                        size="sm"
+                        color="white"
+                        className="border shadow-sm text-danger"
                         onClick={() => handleDelete(item.id)}
                       >
-                        <i className="bi bi-trash"></i> Delete
+                        🗑️
                       </Button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="text-center py-4">No attorneys found.</td>
+                  <td colSpan="7" className="text-center py-4">
+                    No attorneys found.
+                  </td>
                 </tr>
               )}
             </tbody>
           </Table>
 
-          {/* Pagination Component का इस्तेमाल */}
+          {/* Pagination */}
           <PaginationComponent
             totalItems={filteredData.length}
             itemsPerPage={itemsPerPage}

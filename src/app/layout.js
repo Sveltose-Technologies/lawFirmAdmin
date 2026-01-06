@@ -99,7 +99,7 @@
 import React, { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { ToastContainer } from "react-toastify";
-
+import './globals.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "bootstrap-icons/font/bootstrap-icons.css"; 
 import "react-toastify/dist/ReactToastify.css";
