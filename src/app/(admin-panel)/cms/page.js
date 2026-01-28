@@ -1,69 +1,289 @@
+
 // 'use client';
-// import React, { useState } from 'react';
-// import { Card, CardBody, Table, Button, Modal, ModalHeader, ModalBody, Form, FormGroup, Label, Input } from 'reactstrap';
+// import React, { useEffect, useState, useMemo, useCallback } from 'react';
+// import dynamic from 'next/dynamic';
+// import {
+//   Card, CardBody, Table, Button, Modal, ModalHeader, ModalBody,
+//   Form, FormGroup, Label, Input, Row, Col
+// } from 'reactstrap';
 // import { ToastContainer, toast } from 'react-toastify';
 // import 'react-toastify/dist/ReactToastify.css';
 
-// const CMS = () => {
-//   const GOLD = "#eebb5d";
-//   const [pages, setPages] = useState([
-//     { id: 1, title: "About Us", slug: "about-us", status: "Active" },
-//     { id: 2, title: "Privacy Policy", slug: "privacy-policy", status: "Active" }
-//   ]);
+// import 'react-quill-new/dist/quill.snow.css';
+// const ReactQuill = dynamic(() => import('react-quill-new'), { 
+//   ssr: false,
+//   loading: () => <div className="p-2 text-center border rounded small">Loading Editor...</div>
+// });
+
+// import authService from '@/services/authService';
+
+// const LocationCMS = () => {
+//   const GOLD = '#eebb5d';
+
+//   const [pages, setPages] = useState([]);
+//   const [countries, setCountries] = useState([]);
+//   const [allCities, setAllCities] = useState([]); 
+//   const [cities, setCities] = useState([]);    
+  
 //   const [modal, setModal] = useState(false);
-//   const [formData, setFormData] = useState({ title: "", slug: "", content: "" });
 //   const [isEditing, setIsEditing] = useState(false);
 //   const [currentId, setCurrentId] = useState(null);
+//   const [loading, setLoading] = useState(false);
 
-//   const toggle = () => { setModal(!modal); if(!modal) setFormData({title:"", slug:"", content:""}); };
+//   const [formData, setFormData] = useState({
+//     countryId: '',
+//     cityId: '',
+//     content: '',
+//   });
 
-//   const handleSubmit = () => {
-//     if(!formData.title) return toast.error("Title required", {theme:"colored"});
-//     if(isEditing) {
-//         setPages(pages.map(p => p.id === currentId ? {...p, ...formData} : p));
-//         toast.success("Page Updated!", {theme:"colored"});
-//     } else {
-//         setPages([...pages, {...formData, id: Date.now(), status: "Active"}]);
-//         toast.success("Page Created!", {theme:"colored"});
-//     }
-//     toggle();
+//   const modules = useMemo(() => ({
+//     toolbar: [
+//       [{ 'header': [1, 2, 3, false] }],
+//       ['bold', 'italic', 'underline'],
+//       [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+//       ['clean']
+//     ],
+//   }), []);
+
+//   const safeArray = (res) => {
+//     return res?.data?.data || res?.data || res || [];
 //   };
 
-//   const handleEdit = (item) => { setFormData(item); setCurrentId(item.id); setIsEditing(true); setModal(true); };
-//   const handleDelete = (id) => { if(confirm("Delete Page?")) { setPages(pages.filter(p => p.id !== id)); toast.success("Deleted!", {theme:"colored"}); }};
+//   const fetchInitialData = useCallback(async () => {
+//     setLoading(true);
+//     try {
+//       console.log("--- 📢 Fetching Location Data ---");
+//       // Use .catch to prevent 404 from crashing the whole UI
+//       const [cmsRes, countryRes, cityRes] = await Promise.all([
+//         authService.getAllLocationCMS().catch(e => { console.error("CMS 404"); return []; }),
+//         authService.getAllCountries().catch(e => { console.error("Countries 404"); return []; }),
+//         authService.getAllCities().catch(e => { console.error("Cities 404"); return []; })
+//       ]);
+
+//       setPages(safeArray(cmsRes));
+//       setCountries(safeArray(countryRes));
+//       setAllCities(safeArray(cityRes));
+//     } catch (error) {
+//       console.error("Fetch Error:", error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, []);
+
+//   useEffect(() => {
+//     fetchInitialData();
+//   }, [fetchInitialData]);
+
+//   const handleCountryChange = async (e) => {
+//     const countryId = e.target.value;
+//     console.log("Selected Country ID:", countryId);
+//     setFormData({ ...formData, countryId, cityId: '' });
+    
+//     if (countryId) {
+//         // Filter from allCities if you already have them, or fetch again
+//         const filtered = allCities.filter(c => String(c.countryId) === String(countryId));
+//         setCities(filtered);
+//     } else {
+//         setCities([]);
+//     }
+//   };
+
+//   const toggle = () => {
+//     setModal(!modal);
+//     if (!modal) {
+//       setFormData({ countryId: '', cityId: '', content: '' });
+//       setIsEditing(false);
+//       setCurrentId(null);
+//     }
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     if (!formData.countryId || !formData.cityId || !formData.content) {
+//       return toast.error('Sare fields bharna zaroori hai!');
+//     }
+
+//     setLoading(true);
+//     try {
+//       // Data format transformation
+//       const payload = {
+//         countryId: Number(formData.countryId),
+//         cityId: Number(formData.cityId),
+//         content: formData.content,
+//         adminId: 3 // Static or from authService.getCurrentUser().id
+//       };
+
+//       console.log("🚀 Submitting CMS Payload:", payload);
+
+//       const res = isEditing 
+//         ? await authService.updateLocationCMS(currentId, payload) 
+//         : await authService.createLocationCMS(payload);
+
+//       if (res.success || res) {
+//         toast.success(`CMS ${isEditing ? 'Updated' : 'Created'}!`);
+//         fetchInitialData();
+//         toggle();
+//       }
+//     } catch (error) {
+//       console.error("Submit Error:", error.response?.data || error);
+//       toast.error(error.response?.data?.message || "Internal Server Error");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleEdit = (item) => {
+//     setFormData({
+//       countryId: item.countryId,
+//       cityId: item.cityId,
+//       content: item.content,
+//     });
+    
+//     // Set cities for the selected country
+//     const filtered = allCities.filter(c => String(c.countryId) === String(item.countryId));
+//     setCities(filtered);
+
+//     setCurrentId(item.id);
+//     setIsEditing(true);
+//     setModal(true);
+//   };
+
+//   const handleDelete = async (id) => {
+//     if (!window.confirm("Are you sure?")) return;
+//     try {
+//       const res = await authService.deleteLocationCMS(id);
+//       if (res.success) {
+//         toast.success("Deleted!");
+//         fetchInitialData();
+//       }
+//     } catch (error) {
+//       toast.error("Delete failed!");
+//     }
+//   };
 
 //   return (
 //     <div className="p-3 bg-light min-vh-100">
-//       <ToastContainer />
-//       <Card className="mb-4 border-0 shadow-sm"><CardBody className="p-3"><h5 className="mb-0 fw-bold" style={{ color: GOLD }}>CMS Pages</h5></CardBody></Card>
-//       <Card className="border-0 shadow-sm"><CardBody className="p-4">
-//         <div className="d-flex justify-content-end mb-4"><Button onClick={toggle} style={{backgroundColor: GOLD, border:'none'}}>Add Page</Button></div>
-//         <Table className="align-middle text-nowrap"><thead className="table-light"><tr><th>Title</th><th>Slug</th><th>Status</th><th className="text-end">Action</th></tr></thead><tbody>
-//             {pages.map(item => (
-//                 <tr key={item.id}>
-//                     <td>{item.title}</td><td>{item.slug}</td><td>{item.status}</td>
-//                     <td className="text-end">
-//                         <button onClick={()=>handleEdit(item)} className="btn btn-sm me-2" style={{color:GOLD, borderColor:GOLD}}><i className="bi bi-pencil"></i></button>
-//                         <button onClick={()=>handleDelete(item.id)} className="btn btn-sm text-danger border-danger"><i className="bi bi-trash"></i></button>
-//                     </td>
-//                 </tr>
-//             ))}
-//         </tbody></Table>
-//       </CardBody></Card>
-//       <Modal isOpen={modal} toggle={toggle} size="lg"><ModalHeader toggle={toggle}>{isEditing?"Edit":"Add"} Page</ModalHeader><ModalBody className="p-4">
-//         <Form>
-//             <FormGroup><Label>Page Title</Label><Input value={formData.title} onChange={e=>setFormData({...formData, title:e.target.value})} /></FormGroup>
-//             <FormGroup><Label>Slug</Label><Input value={formData.slug} onChange={e=>setFormData({...formData, slug:e.target.value})} /></FormGroup>
-//             <FormGroup><Label>Content</Label><Input type="textarea" rows="5" value={formData.content} onChange={e=>setFormData({...formData, content:e.target.value})} /></FormGroup>
-//             <Button block style={{backgroundColor: GOLD, border:'none'}} onClick={handleSubmit}>Save Page</Button>
-//         </Form>
-//       </ModalBody></Modal>
+//       <ToastContainer theme="colored" />
+
+//       <Card className="mb-4 border-0 shadow-sm rounded-3">
+//         <CardBody className="d-flex justify-content-between align-items-center py-3">
+//           <div>
+//             <h5 className="fw-bold mb-0" style={{ color: GOLD }}>Location CMS</h5>
+//             <p className="text-muted small mb-0">Manage website content for different cities.</p>
+//           </div>
+//           <Button style={{ backgroundColor: GOLD, border: 'none' }} className="px-4 fw-bold" onClick={toggle}>
+//             + Add Location Content
+//           </Button>
+//         </CardBody>
+//       </Card>
+
+//       <Card className="border-0 shadow-sm rounded-3">
+//         <CardBody className="p-0">
+//           <Table hover responsive className="align-middle mb-0">
+//             <thead className="table-light">
+//               <tr className="small text-uppercase">
+//                 <th className="ps-4">Country</th>
+//                 <th>City</th>
+//                 <th>Preview</th>
+//                 <th className="text-end pe-4">Action</th>
+//               </tr>
+//             </thead>
+//             <tbody>
+//               {pages.length > 0 ? (
+//                 pages.map((item) => {
+//                   const country = countries.find(c => String(c.id) === String(item.countryId));
+//                   const city = allCities.find(c => String(c.id) === String(item.cityId));
+//                   return (
+//                     <tr key={item.id}>
+//                       <td className="ps-4 fw-bold">{country ? country.countryName : `ID: ${item.countryId}`}</td>
+//                       <td>{city ? city.cityName : `ID: ${item.cityId}`}</td>
+//                       <td className="text-muted small">
+//                         <div className="text-truncate" style={{ maxWidth: '300px' }} 
+//                              dangerouslySetInnerHTML={{ __html: item.content.substring(0, 100) + '...' }} />
+//                       </td>
+//                       <td className="text-end pe-4">
+//                         <Button size="sm" color="white" className="border shadow-sm me-2" onClick={() => handleEdit(item)}>✏️</Button>
+//                         <Button size="sm" color="white" className="text-danger border shadow-sm" onClick={() => handleDelete(item.id)}>🗑️</Button>
+//                       </td>
+//                     </tr>
+//                   );
+//                 })
+//               ) : (
+//                 <tr><td colSpan="4" className="text-center p-5 text-muted">No records found.</td></tr>
+//               )}
+//             </tbody>
+//           </Table>
+//         </CardBody>
+//       </Card>
+
+//       <Modal isOpen={modal} toggle={toggle} size="lg" centered scrollable>
+//         <ModalHeader toggle={toggle} className="border-0 pb-0">
+//             <span className="fw-bold" style={{ color: GOLD }}>{isEditing ? 'Edit' : 'Add'} Location Details</span>
+//         </ModalHeader>
+//         <ModalBody className="px-4 pb-4">
+//           <Form onSubmit={handleSubmit}>
+//             <Row className="gy-3">
+//               <Col md={6}>
+//                 <FormGroup>
+//                   <Label className="small fw-bold">Select Country *</Label>
+//                   <Input type="select" value={formData.countryId} onChange={handleCountryChange} required>
+//                     <option value="">-- Select Country --</option>
+//                     {countries.map(c => <option key={c.id} value={c.id}>{c.countryName}</option>)}
+//                   </Input>
+//                 </FormGroup>
+//               </Col>
+//               <Col md={6}>
+//                 <FormGroup>
+//                   <Label className="small fw-bold">Select City *</Label>
+//                   <Input 
+//                     type="select" 
+//                     value={formData.cityId} 
+//                     onChange={(e) => setFormData({...formData, cityId: e.target.value})} 
+//                     required
+//                     disabled={!formData.countryId}
+//                   >
+//                     <option value="">-- Select City --</option>
+//                     {cities.map(c => <option key={c.id} value={c.id}>{c.cityName}</option>)}
+//                   </Input>
+//                 </FormGroup>
+//               </Col>
+//               <Col xs={12}>
+//                 <FormGroup>
+//                   <Label className="small fw-bold">Detailed Content *</Label>
+//                   <div className="bg-white border rounded">
+//                     <ReactQuill
+//                       theme="snow"
+//                       modules={modules}
+//                       value={formData.content}
+//                       onChange={(val) => setFormData({...formData, content: val})}
+//                       style={{ height: '250px', marginBottom: '50px' }}
+//                       placeholder="Enter city specific details..."
+//                     />
+//                   </div>
+//                 </FormGroup>
+//               </Col>
+//             </Row>
+
+//             <div className="d-flex gap-2 mt-4">
+//               <Button type="submit" className="px-4 fw-bold" style={{ backgroundColor: GOLD, border: 'none', color: '#fff' }} disabled={loading}>
+//                 {loading ? "Saving..." : (isEditing ? 'Update Page' : 'Save Page')}
+//               </Button>
+//               <Button outline onClick={toggle} className="px-4">Cancel</Button>
+//             </div>
+//           </Form>
+//         </ModalBody>
+//       </Modal>
 //     </div>
 //   );
 // };
-// export default CMS;
+
+// export default LocationCMS;
+
+
+
+
 'use client';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import {
   Card, CardBody, Table, Button, Modal, ModalHeader, ModalBody,
@@ -72,28 +292,28 @@ import {
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// CSS Import
+// Rich Text Editor Setup
 import 'react-quill-new/dist/quill.snow.css';
-
-// Dynamically import react-quill-new (SSR: false is must)
 const ReactQuill = dynamic(() => import('react-quill-new'), { 
   ssr: false,
-  loading: () => <div className="p-3 text-center border">Loading Editor...</div>
+  loading: () => <div className="p-2 text-center border rounded small">Loading Editor...</div>
 });
 
 import authService from '@/services/authService';
 
 const LocationCMS = () => {
   const GOLD = '#eebb5d';
+  const LIGHT_GOLD = '#fdf8ef';
 
   const [pages, setPages] = useState([]);
   const [countries, setCountries] = useState([]);
-  const [allCities, setAllCities] = useState([]); // Sabhi cities (Table mapping ke liye)
-  const [cities, setCities] = useState([]);    // Filtered cities (Modal dropdown ke liye)
+  const [allCities, setAllCities] = useState([]); 
+  const [cities, setCities] = useState([]);    
   
   const [modal, setModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     countryId: '',
@@ -101,48 +321,54 @@ const LocationCMS = () => {
     content: '',
   });
 
-  // Editor configuration
   const modules = useMemo(() => ({
     toolbar: [
       [{ 'header': [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'color': [] }, { 'background': [] }],
+      ['bold', 'italic', 'underline'],
       [{ 'list': 'ordered' }, { 'list': 'bullet' }],
       ['clean']
     ],
   }), []);
 
-  useEffect(() => {
-    fetchInitialData();
-  }, []);
-
-  const fetchInitialData = async () => {
-    try {
-      console.log("📢 Refreshing Table Data...");
-      const [cmsRes, countryRes, cityRes] = await Promise.all([
-        authService.getAllLocationCMS(),
-        authService.getAllCountries(),
-        authService.getAllCities()
-      ]);
-
-      if (cmsRes.success) setPages(cmsRes.data.data || []);
-      if (countryRes.success) setCountries(countryRes.data.data || []);
-      if (cityRes.success) setAllCities(cityRes.data.data || []);
-    } catch (error) {
-      console.error("Fetch Error:", error);
-    }
+  // API se aane wale data ko array format mein safe karne ke liye
+  const safeArray = (res) => {
+    return res?.data?.data || res?.data || res || [];
   };
 
-  // Country badalne par cities fetch karna
-  const handleCountryChange = async (e) => {
+  const fetchInitialData = useCallback(async () => {
+    setLoading(true);
+    try {
+      console.log("--- 📢 Fetching Location Data ---");
+      // Sahi Endpoints jo Rituraj ne bataye: /location-country, /location-city, /location-cms
+      const [cmsRes, countryRes, cityRes] = await Promise.all([
+        authService.getAllLocationCMS().catch(() => []),
+        authService.getAllCountries().catch(() => []),
+        authService.getAllCities().catch(() => [])
+      ]);
+
+      setPages(safeArray(cmsRes));
+      setCountries(safeArray(countryRes));
+      setAllCities(safeArray(cityRes));
+    } catch (error) {
+      console.error("Fetch Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchInitialData();
+  }, [fetchInitialData]);
+
+  const handleCountryChange = (e) => {
     const countryId = e.target.value;
     setFormData({ ...formData, countryId, cityId: '' });
+    
     if (countryId) {
-      console.log(`📢 Fetching cities for Country ID: ${countryId}`);
-      const res = await authService.getAllCities(countryId);
-      if (res.success) setCities(res.data.data || []);
+        const filtered = allCities.filter(c => String(c.countryId) === String(countryId));
+        setCities(filtered);
     } else {
-      setCities([]);
+        setCities([]);
     }
   };
 
@@ -155,139 +381,143 @@ const LocationCMS = () => {
     }
   };
 
-  // ==========================================
-  // CREATE & UPDATE (SUBMIT)
-  // ==========================================
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!formData.countryId || !formData.cityId || !formData.content) {
-      return toast.error('Sare fields bharna zaroori hai!', { theme: "colored" });
+      return toast.error('Sare fields bharna zaroori hai!');
     }
 
+    setLoading(true);
     try {
-      let res;
-      if (isEditing) {
-        console.log("📢 Calling Update CMS API...");
-        res = await authService.updateLocationCMS(currentId, formData);
-      } else {
-        console.log("📢 Calling Create CMS API...");
-        res = await authService.createLocationCMS(formData);
-      }
+      const payload = {
+        adminId: 3,
+        countryId: Number(formData.countryId),
+        cityId: Number(formData.cityId),
+        content: formData.content,
+      };
 
-      if (res.success) {
-        toast.success(`CMS ${isEditing ? 'Update' : 'Create'} ho gaya!`);
+      const res = isEditing 
+        ? await authService.updateLocationCMS(currentId, payload) 
+        : await authService.createLocationCMS(payload);
+
+      if (res.success || res) {
+        toast.success(`CMS ${isEditing ? 'Updated' : 'Created'} Successfully!`);
         fetchInitialData();
         toggle();
-      } else {
-        toast.error(res.message || "Kuch galat hua");
       }
     } catch (error) {
-      toast.error("API Error");
+      toast.error(error.response?.data?.message || "Server Error");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // ==========================================
-  // EDIT
-  // ==========================================
-  const handleEdit = async (item) => {
+  const handleEdit = (item) => {
     setFormData({
       countryId: item.countryId,
       cityId: item.cityId,
       content: item.content,
     });
     
-    // Modal khulne se pehle us country ki cities load karna
-    const res = await authService.getAllCities(item.countryId);
-    if (res.success) setCities(res.data.data || []);
+    const filtered = allCities.filter(c => String(c.countryId) === String(item.countryId));
+    setCities(filtered);
 
     setCurrentId(item.id);
     setIsEditing(true);
     setModal(true);
   };
 
-  // ==========================================
-  // DELETE
-  // ==========================================
   const handleDelete = async (id) => {
-    if (window.confirm("Kya aap ise delete karna chahte hain?")) {
-      try {
-        console.log(`📢 Deleting CMS ID: ${id}`);
-        const res = await authService.deleteLocationCMS(id);
-        if (res.success) {
-          toast.success("Delete successfully!");
-          fetchInitialData();
-        }
-      } catch (error) {
-        toast.error("Delete failed!");
+    if (!window.confirm("Kya aap ise delete karna chahte hain?")) return;
+    try {
+      const res = await authService.deleteLocationCMS(id);
+      if (res.success) {
+        toast.success("Deleted!");
+        fetchInitialData();
       }
+    } catch (error) {
+      toast.error("Delete failed!");
     }
   };
 
   return (
-    <div className="p-3 bg-light min-vh-100">
-      <ToastContainer position="top-right" autoClose={3000} />
+    <div className="p-3 p-md-4 bg-light min-vh-100">
+      <ToastContainer theme="colored" />
 
-      {/* Header */}
-      <Card className="mb-4 border-0 shadow-sm">
+      {/* Header Section */}
+      <Card className="mb-4 border-0 shadow-sm rounded-3">
         <CardBody className="d-flex justify-content-between align-items-center py-3">
-          <h5 className="fw-bold mb-0" style={{ color: GOLD }}>Location CMS</h5>
-          <Button style={{ backgroundColor: GOLD, border: 'none' }} onClick={toggle}>
+          <div>
+            <h5 className="fw-bold mb-0" style={{ color: GOLD }}>Location CMS</h5>
+            <p className="text-muted small mb-0">Manage landing page content for countries and cities.</p>
+          </div>
+          <Button style={{ backgroundColor: GOLD, border: 'none', color: '#fff' }} className="px-4 fw-bold shadow-sm" onClick={toggle}>
             + Add Content
           </Button>
         </CardBody>
       </Card>
 
-      {/* Table */}
-      <Card className="border-0 shadow-sm">
-        <CardBody>
-          <Table hover responsive className="align-middle">
-            <thead className="table-light">
-              <tr>
+      {/* Data Table */}
+      <Card className="border-0 shadow-sm rounded-3">
+        <CardBody className="p-0">
+          <Table hover responsive className="align-middle mb-0">
+            <thead style={{ backgroundColor: LIGHT_GOLD }}>
+              <tr className="small text-uppercase">
+                <th className="ps-4 py-3" style={{ width: '80px' }}>Sr. No.</th>
                 <th>Country</th>
                 <th>City</th>
                 <th>Content Preview</th>
-                <th className="text-end">Action</th>
+                <th className="text-end pe-4">Action</th>
               </tr>
             </thead>
             <tbody>
-              {pages.length === 0 ? (
-                <tr><td colSpan="4" className="text-center p-4 text-muted">No Data Found</td></tr>
-              ) : (
-                pages.map((item) => {
-                  const country = countries.find(c => String(c.id) === String(item.countryId));
-                  const city = allCities.find(c => String(c.id) === String(item.cityId));
+              {pages.length > 0 ? (
+                pages.map((item, index) => {
+                  const countryObj = countries.find(c => String(c.id) === String(item.countryId));
+                  const cityObj = allCities.find(c => String(c.id) === String(item.cityId));
                   return (
-                    <tr key={item.id}>
-                      <td className="fw-bold text-dark">{country ? country.countryName : `ID: ${item.countryId}`}</td>
-                      <td>{city ? city.cityName : `ID: ${item.cityId}`}</td>
+                    <tr key={item.id} className="border-bottom">
+                      <td className="ps-4 text-muted">{index + 1}.</td>
+                      <td className="fw-bold text-dark">{countryObj ? countryObj.countryName : `ID: ${item.countryId}`}</td>
+                      <td>{cityObj ? cityObj.cityName : `ID: ${item.cityId}`}</td>
                       <td>
                         <div 
-                          style={{ maxWidth: '300px', maxHeight: '50px', overflow: 'hidden', color: '#666' }}
-                          dangerouslySetInnerHTML={{ __html: item.content }}
+                          className="text-muted small text-truncate" 
+                          style={{ maxWidth: '300px' }} 
+                          dangerouslySetInnerHTML={{ __html: item.content.substring(0, 80) + '...' }} 
                         />
                       </td>
-                      <td className="text-end">
-                        <Button size="sm" color="light" className="me-2" onClick={() => handleEdit(item)}>✏️</Button>
-                        <Button size="sm" color="light" className="text-danger" onClick={() => handleDelete(item.id)}>🗑️</Button>
+                      <td className="text-end pe-4">
+                        <Button size="sm" color="white" className="border shadow-sm me-2" onClick={() => handleEdit(item)}>✏️</Button>
+                        <Button size="sm" color="white" className="text-danger border shadow-sm" onClick={() => handleDelete(item.id)}>🗑️</Button>
                       </td>
                     </tr>
                   );
                 })
+              ) : (
+                <tr>
+                  <td colSpan="5" className="text-center p-5 text-muted">
+                    {loading ? "Loading data..." : "No records found."}
+                  </td>
+                </tr>
               )}
             </tbody>
           </Table>
         </CardBody>
       </Card>
 
-      {/* MODAL */}
-      <Modal isOpen={modal} toggle={toggle} size="lg" centered>
-        <ModalHeader toggle={toggle} className="border-0">{isEditing ? 'Edit' : 'Add'} Location CMS</ModalHeader>
+      {/* Modal Section */}
+      <Modal isOpen={modal} toggle={toggle} size="lg" centered scrollable>
+        <ModalHeader toggle={toggle} className="border-0 pb-0">
+            <span className="fw-bold" style={{ color: GOLD }}>{isEditing ? 'Edit' : 'Add'} Location Details</span>
+        </ModalHeader>
         <ModalBody className="px-4 pb-4">
-          <Form>
-            <Row>
+          <Form onSubmit={handleSubmit}>
+            <Row className="gy-3">
               <Col md={6}>
                 <FormGroup>
-                  <Label className="small fw-bold">Select Country</Label>
-                  <Input type="select" value={formData.countryId} onChange={handleCountryChange}>
+                  <Label className="small fw-bold">Select Country *</Label>
+                  <Input type="select" value={formData.countryId} onChange={handleCountryChange} required>
                     <option value="">-- Choose Country --</option>
                     {countries.map(c => <option key={c.id} value={c.id}>{c.countryName}</option>)}
                   </Input>
@@ -295,32 +525,42 @@ const LocationCMS = () => {
               </Col>
               <Col md={6}>
                 <FormGroup>
-                  <Label className="small fw-bold">Select City</Label>
-                  <Input type="select" value={formData.cityId} onChange={(e) => setFormData({...formData, cityId: e.target.value})}>
+                  <Label className="small fw-bold">Select City *</Label>
+                  <Input 
+                    type="select" 
+                    value={formData.cityId} 
+                    onChange={(e) => setFormData({...formData, cityId: e.target.value})} 
+                    required
+                    disabled={!formData.countryId}
+                  >
                     <option value="">-- Choose City --</option>
                     {cities.map(c => <option key={c.id} value={c.id}>{c.cityName}</option>)}
                   </Input>
                 </FormGroup>
               </Col>
+              <Col xs={12}>
+                <FormGroup>
+                  <Label className="small fw-bold">Landing Page Content *</Label>
+                  <div className="bg-white border rounded">
+                    <ReactQuill
+                      theme="snow"
+                      modules={modules}
+                      value={formData.content}
+                      onChange={(val) => setFormData({...formData, content: val})}
+                      style={{ height: '250px', marginBottom: '50px' }}
+                      placeholder="Write detailed information here..."
+                    />
+                  </div>
+                </FormGroup>
+              </Col>
             </Row>
 
-            <FormGroup className="mb-4">
-              <Label className="small fw-bold">CMS Content</Label>
-              <div style={{ background: '#fff' }}>
-                <ReactQuill
-                  theme="snow"
-                  modules={modules}
-                  value={formData.content}
-                  onChange={(val) => setFormData({...formData, content: val})}
-                  style={{ height: '250px', marginBottom: '50px' }}
-                  placeholder="Write something amazing about this location..."
-                />
-              </div>
-            </FormGroup>
-
-            <Button block className="mt-4 py-2 fw-bold" style={{ backgroundColor: GOLD, border: 'none' }} onClick={handleSubmit}>
-              {isEditing ? 'Update Page' : 'Save Page'}
-            </Button>
+            <div className="d-flex gap-2 mt-4">
+              <Button type="submit" className="px-4 fw-bold shadow-sm" style={{ backgroundColor: GOLD, border: 'none', color: '#fff' }} disabled={loading}>
+                {loading ? "Saving..." : (isEditing ? 'Update Page' : 'Save Page')}
+              </Button>
+              <Button outline onClick={toggle} className="px-4">Cancel</Button>
+            </div>
           </Form>
         </ModalBody>
       </Modal>

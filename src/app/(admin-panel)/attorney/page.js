@@ -1,742 +1,3 @@
-// "use client";
-// import React, { useEffect, useState } from "react";
-// import { Card, CardBody, Table, Input, Button, Modal, ModalHeader, ModalBody, Form, FormGroup, Label } from "reactstrap";
-// import { ToastContainer, toast } from "react-toastify";
-// import 'react-toastify/dist/ReactToastify.css';
-// import authService from "../../../services/authService";
-
-// const Attorney = () => {
-//   const [attorneys, setAttorneys] = useState([]);
-//   const [modal, setModal] = useState(false);
-//   const [isEditing, setIsEditing] = useState(false);
-//   const [currentId, setCurrentId] = useState(null);
-//   const [formData, setFormData] = useState({ firstName: "", lastName: "", email: "", mobile: "", city: "" });
-//   const [searchTerm, setSearchTerm] = useState("");
-
-//   const currentUser = authService.getCurrentUser(); // from localStorage
-//   const isAdmin = currentUser?.role === "admin";
-
-//   // Fetch attorneys
-//   useEffect(() => {
-//     const fetchAttorneys = async () => {
-//       try {
-//         const res = await authService.getAllUsers(); // GET /auth/getall
-//         if (res.success) {
-//           let data = res.data || [];
-//           console.log("All users data:", data);
-
-//           // Filter only attorneys
-//           const attorneysData = data.users.filter(u => u.role.toLowerCase() === "attorney");
-//           console.log("Filtered attorneys:", attorneysData);
-
-//           setAttorneys(attorneysData);
-//         } else {
-//           toast.error(res.message || "Failed to load users");
-//         }
-//       } catch (err) {
-//         console.error("Error fetching attorneys:", err);
-//         toast.error("Something went wrong while fetching attorneys");
-//       }
-//     };
-
-//     fetchAttorneys();
-//   }, []);
-
-//   const toggle = () => {
-//     setModal(!modal);
-//     if (!modal) {
-//       setFormData({ firstName: "", lastName: "", email: "", mobile: "", city: "" });
-//       setIsEditing(false);
-//     }
-//   };
-
-//   const handleSubmit = async () => {
-//     if (!formData.firstName || !formData.email)
-//       return toast.error("First Name & Email Required!", { theme: "colored" });
-
-//     try {
-//       if (isEditing) {
-//         await authService.updateUser(currentId, formData);
-//         toast.success("Attorney Updated!", { theme: "colored" });
-//       } else {
-//         await authService.addUser({ ...formData, role: "attorney" }); // always add as attorney
-//         toast.success("Attorney Added!", { theme: "colored" });
-//       }
-//       // Refresh list
-//       const res = await authService.getAllUsers();
-//       if (res.success) {
-//         setAttorneys(res.data.users.filter(u => u.role.toLowerCase() === "attorney"));
-//       }
-//       toggle();
-//     } catch (err) {
-//       toast.error(err.message || "Failed!");
-//     }
-//   };
-
-//   const handleDelete = async (id) => {
-//     if (confirm("Delete Attorney?")) {
-//       try {
-//         await authService.deleteUser(id);
-//         toast.success("Attorney Deleted!", { theme: "colored" });
-
-//         // Refresh list
-//         setAttorneys(attorneys.filter(item => item.id !== id));
-//       } catch (err) {
-//         toast.error(err.message || "Failed to delete!");
-//       }
-//     }
-//   };
-
-//   const handleEdit = (item) => {
-//     setFormData(item);
-//     setCurrentId(item.id);
-//     setIsEditing(true);
-//     setModal(true);
-//   };
-
-//   const GOLD = "#eebb5d";
-//   const filteredData = attorneys.filter(i => i.firstName?.toLowerCase().includes(searchTerm.toLowerCase()));
-
-//   return (
-//     <div className="p-3 bg-light min-vh-100">
-//       <ToastContainer />
-//       <Card className="mb-4 border-0 shadow-sm">
-//         <CardBody className="p-3">
-//           <h5 className="mb-0 fw-bold" style={{ color: GOLD }}>Attorneys</h5>
-//         </CardBody>
-//       </Card>
-//       <Card className="border-0 shadow-sm">
-//         <CardBody className="p-4">
-//           <div className="d-flex flex-column flex-sm-row justify-content-between mb-4 gap-3">
-//             <div className="w-100" style={{ maxWidth: '300px' }}>
-//               <Input
-//                 placeholder="Search..."
-//                 className="rounded-pill"
-//                 onChange={e => setSearchTerm(e.target.value)}
-//               />
-//             </div>
-//             {isAdmin && (
-//               <div>
-//                 <Button
-//                   onClick={toggle}
-//                   className="w-100"
-//                   style={{ backgroundColor: GOLD, border: 'none', whiteSpace: 'nowrap' }}
-//                 >
-//                   Add Attorney
-//                 </Button>
-//               </div>
-//             )}
-//           </div>
-
-//           <Table responsive className="align-middle text-nowrap">
-//             <thead className="table-light">
-//               <tr>
-//                 <th>First Name</th>
-//                 <th>Last Name</th>
-//                 <th>Email</th>
-//                 <th>Phone</th>
-//                 <th>Address</th>
-//                 {isAdmin && <th className="text-end">Action</th>}
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {filteredData.map(item => (
-//                 <tr key={item.id}>
-//                   <td>{item.firstName}</td>
-//                   <td>{item.lastName}</td>
-//                   <td>{item.email}</td>
-//                   <td>{item.mobile || "-"}</td>
-//                   <td>{item.city || "-"}</td>
-//                   {isAdmin && (
-//                     <td className="text-end">
-//                       <button onClick={() => handleEdit(item)} className="btn btn-sm me-2" style={{ color: GOLD, borderColor: GOLD }}>
-//                         <i className="bi bi-pencil"></i>
-//                       </button>
-//                       <button onClick={() => handleDelete(item.id)} className="btn btn-sm text-danger border-danger">
-//                         <i className="bi bi-trash"></i>
-//                       </button>
-//                     </td>
-//                   )}
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </Table>
-//         </CardBody>
-//       </Card>
-
-//       {isAdmin && (
-//         <Modal isOpen={modal} toggle={toggle} centered>
-//           <ModalHeader toggle={toggle} style={{ borderBottom: 'none' }}>{isEditing ? "Edit" : "Add"} Attorney</ModalHeader>
-//           <ModalBody className="p-4 pt-0">
-//             <Form>
-//               <FormGroup><Label>First Name</Label><Input value={formData.firstName || ""} onChange={e => setFormData({ ...formData, firstName: e.target.value })} /></FormGroup>
-//               <FormGroup><Label>Last Name</Label><Input value={formData.lastName || ""} onChange={e => setFormData({ ...formData, lastName: e.target.value })} /></FormGroup>
-//               <FormGroup><Label>Email</Label><Input value={formData.email || ""} onChange={e => setFormData({ ...formData, email: e.target.value })} /></FormGroup>
-//               <FormGroup><Label>Phone</Label><Input value={formData.mobile || ""} onChange={e => setFormData({ ...formData, mobile: e.target.value })} /></FormGroup>
-//               <FormGroup><Label>Address</Label><Input value={formData.city || ""} onChange={e => setFormData({ ...formData, city: e.target.value })} /></FormGroup>
-//               <Button block style={{ backgroundColor: GOLD, border: 'none' }} onClick={handleSubmit}>Submit</Button>
-//             </Form>
-//           </ModalBody>
-//         </Modal>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default Attorney;
-
-
-// "use client";
-// import React, { useEffect, useState } from "react";
-// import {
-//   Card,
-//   CardBody,
-//   Table,
-//   Input,
-  
-// } from "reactstrap";
-// import { ToastContainer, toast } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
-// import authService from "../../../services/authService";
-
-// const Attorney = () => {
-//   const [attorneys, setAttorneys] = useState([]);
-
-//   // 🔴 COMMENTED (Add / Edit related)
-//   // const [modal, setModal] = useState(false);
-//   // const [isEditing, setIsEditing] = useState(false);
-//   // const [currentId, setCurrentId] = useState(null);
-//   // const [formData, setFormData] = useState({
-//   //   firstName: "",
-//   //   lastName: "",
-//   //   email: "",
-//   //   mobile: "",
-//   //   city: ""
-//   // });
-
-//   const [searchTerm, setSearchTerm] = useState("");
-
-//   const currentUser = authService.getCurrentUser(); // from localStorage
-//   const isAdmin = currentUser?.role === "admin";
-
-//   // Fetch attorneys
-//   useEffect(() => {
-//     const fetchAttorneys = async () => {
-//       try {
-//         const res = await authService.getAllUsers(); // GET /auth/getall
-//         if (res.success) {
-//           let data = res.data || [];
-//           console.log("All users data:", data);
-
-//           // Filter only attorneys
-//           const attorneysData = data.users.filter(
-//             u => u.role.toLowerCase() === "attorney"
-//           );
-//           console.log("Filtered attorneys:", attorneysData);
-
-//           setAttorneys(attorneysData);
-//         } else {
-//           toast.error(res.message || "Failed to load users");
-//         }
-//       } catch (err) {
-//         console.error("Error fetching attorneys:", err);
-//         toast.error("Something went wrong while fetching attorneys");
-//       }
-//     };
-
-//     fetchAttorneys();
-//   }, []);
-
-//   // 🔴 COMMENTED (Modal toggle)
-//   // const toggle = () => {
-//   //   setModal(!modal);
-//   //   if (!modal) {
-//   //     setFormData({
-//   //       firstName: "",
-//   //       lastName: "",
-//   //       email: "",
-//   //       mobile: "",
-//   //       city: ""
-//   //     });
-//   //     setIsEditing(false);
-//   //   }
-//   // };
-
-//   // 🔴 COMMENTED (Add / Update submit)
-//   // const handleSubmit = async () => {
-//   //   if (!formData.firstName || !formData.email)
-//   //     return toast.error("First Name & Email Required!", { theme: "colored" });
-
-//   //   try {
-//   //     if (isEditing) {
-//   //       await authService.updateUser(currentId, formData);
-//   //       toast.success("Attorney Updated!", { theme: "colored" });
-//   //     } else {
-//   //       await authService.addUser({ ...formData, role: "attorney" });
-//   //       toast.success("Attorney Added!", { theme: "colored" });
-//   //     }
-
-//   //     const res = await authService.getAllUsers();
-//   //     if (res.success) {
-//   //       setAttorneys(
-//   //         res.data.users.filter(u => u.role.toLowerCase() === "attorney")
-//   //       );
-//   //     }
-//   //     toggle();
-//   //   } catch (err) {
-//   //     toast.error(err.message || "Failed!");
-//   //   }
-//   // };
-
-//   const handleDelete = async (id) => {
-//     if (confirm("Delete Attorney?")) {
-//       try {
-//         await authService.deleteUser(id);
-//         toast.success("Attorney Deleted!", { theme: "colored" });
-
-//         setAttorneys(attorneys.filter(item => item.id !== id));
-//       } catch (err) {
-//         toast.error(err.message || "Failed to delete!");
-//       }
-//     }
-//   };
-
-//   // 🔴 COMMENTED (Edit handler)
-//   // const handleEdit = (item) => {
-//   //   setFormData(item);
-//   //   setCurrentId(item.id);
-//   //   setIsEditing(true);
-//   //   setModal(true);
-//   // };
-
-//   const GOLD = "#eebb5d";
-//   const filteredData = attorneys.filter(i =>
-//     i.firstName?.toLowerCase().includes(searchTerm.toLowerCase())
-//   );
-
-//   return (
-//     <div className="p-3 bg-light min-vh-100">
-//       <ToastContainer />
-
-//       <Card className="mb-4 border-0 shadow-sm">
-//         <CardBody className="p-3">
-//           <h5 className="mb-0 fw-bold" style={{ color: GOLD }}>
-//             Attorneys
-//           </h5>
-//         </CardBody>
-//       </Card>
-
-//       <Card className="border-0 shadow-sm">
-//         <CardBody className="p-4">
-//           <div className="d-flex flex-column flex-sm-row justify-content-between mb-4 gap-3">
-//             <div className="w-100" style={{ maxWidth: "300px" }}>
-//               <Input
-//                 placeholder="Search..."
-//                 className="rounded-pill"
-//                 onChange={e => setSearchTerm(e.target.value)}
-//               />
-//             </div>
-
-//             {/* 🔴 COMMENTED (Add Attorney button) */}
-//             {/* {isAdmin && (
-//               <div>
-//                 <Button
-//                   onClick={toggle}
-//                   className="w-100"
-//                   style={{
-//                     backgroundColor: GOLD,
-//                     border: "none",
-//                     whiteSpace: "nowrap"
-//                   }}
-//                 >
-//                   Add Attorney
-//                 </Button>
-//               </div>
-//             )} */}
-//           </div>
-
-//           <Table responsive className="align-middle text-nowrap">
-//             <thead className="table-light">
-//               <tr>
-//                 <th>First Name</th>
-//                 <th>Last Name</th>
-//                 <th>Email</th>
-//                 <th>Phone</th>
-//                 <th>Address</th>
-//                 {isAdmin && <th className="text-end">Action</th>}
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {filteredData.map(item => (
-//                 <tr key={item.id}>
-//                   <td>{item.firstName}</td>
-//                   <td>{item.lastName}</td>
-//                   <td>{item.email}</td>
-//                   <td>{item.mobile || "-"}</td>
-//                   <td>{item.city || "-"}</td>
-
-//                   {isAdmin && (
-//                     <td className="text-end">
-//                       {/* 🔴 COMMENTED (Edit button) */}
-//                       {/* <button
-//                         onClick={() => handleEdit(item)}
-//                         className="btn btn-sm me-2"
-//                         style={{ color: GOLD, borderColor: GOLD }}
-//                       >
-//                         <i className="bi bi-pencil"></i>
-//                       </button> */}
-
-//                       <button
-//                         onClick={() => handleDelete(item.id)}
-//                         className="btn btn-sm text-danger border-danger"
-//                       >
-//                         <i className="bi bi-trash"></i>
-//                       </button>
-//                     </td>
-//                   )}
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </Table>
-//         </CardBody>
-//       </Card>
-
-//       {/* 🔴 COMMENTED (Modal & Form) */}
-//       {/* {isAdmin && (
-//         <Modal isOpen={modal} toggle={toggle} centered>
-//           <ModalHeader toggle={toggle} style={{ borderBottom: "none" }}>
-//             {isEditing ? "Edit" : "Add"} Attorney
-//           </ModalHeader>
-//           <ModalBody className="p-4 pt-0">
-//             <Form>
-//               <FormGroup>
-//                 <Label>First Name</Label>
-//                 <Input
-//                   value={formData.firstName || ""}
-//                   onChange={e =>
-//                     setFormData({ ...formData, firstName: e.target.value })
-//                   }
-//                 />
-//               </FormGroup>
-//               <FormGroup>
-//                 <Label>Last Name</Label>
-//                 <Input
-//                   value={formData.lastName || ""}
-//                   onChange={e =>
-//                     setFormData({ ...formData, lastName: e.target.value })
-//                   }
-//                 />
-//               </FormGroup>
-//               <FormGroup>
-//                 <Label>Email</Label>
-//                 <Input
-//                   value={formData.email || ""}
-//                   onChange={e =>
-//                     setFormData({ ...formData, email: e.target.value })
-//                   }
-//                 />
-//               </FormGroup>
-//               <FormGroup>
-//                 <Label>Phone</Label>
-//                 <Input
-//                   value={formData.mobile || ""}
-//                   onChange={e =>
-//                     setFormData({ ...formData, mobile: e.target.value })
-//                   }
-//                 />
-//               </FormGroup>
-//               <FormGroup>
-//                 <Label>Address</Label>
-//                 <Input
-//                   value={formData.city || ""}
-//                   onChange={e =>
-//                     setFormData({ ...formData, city: e.target.value })
-//                   }
-//                 />
-//               </FormGroup>
-//               <Button
-//                 block
-//                 style={{ backgroundColor: GOLD, border: "none" }}
-//                 onClick={handleSubmit}
-//               >
-//                 Submit
-//               </Button>
-//             </Form>
-//           </ModalBody>
-//         </Modal>
-//       )} */}
-//     </div>
-//   );
-// };
-
-// export default Attorney;
-
-
-// "use client";
-// import React, { useEffect, useState } from "react";
-// import {
-//   Card,
-//   CardBody,
-//   Table,
-//   Input
-// } from "reactstrap";
-// import { ToastContainer, toast } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
-// import authService from "../../../services/authService";
-
-// const Attorney = () => {
-//   const [attorneys, setAttorneys] = useState([]);
-//   const [searchTerm, setSearchTerm] = useState("");
-
-//   // Fetch attorneys
-//   useEffect(() => {
-//     const fetchAttorneys = async () => {
-//       try {
-//         const res = await authService.getAllUsers(); // GET /auth/getall
-//         if (res.success) {
-//           const data = res.data || [];
-//           console.log("All users data:", data);
-
-//           // Filter only attorneys
-//           const attorneysData = data.users.filter(
-//             u => u.role.toLowerCase() === "attorney"
-//           );
-//           console.log("Filtered attorneys:", attorneysData);
-
-//           setAttorneys(attorneysData);
-//         } else {
-//           toast.error(res.message || "Failed to load users");
-//         }
-//       } catch (err) {
-//         console.error("Error fetching attorneys:", err);
-//         toast.error("Something went wrong while fetching attorneys");
-//       }
-//     };
-
-//     fetchAttorneys();
-//   }, []);
-
-//   // Filter attorneys by search term (first or last name)
-//   const filteredData = attorneys.filter(u =>
-//     `${u.firstName} ${u.lastName}`
-//       .toLowerCase()
-//       .includes(searchTerm.toLowerCase())
-//   );
-
-//   const GOLD = "#eebb5d";
-
-//   return (
-//     <div className="p-3 bg-light min-vh-100">
-//       <ToastContainer />
-
-//       <Card className="mb-4 border-0 shadow-sm">
-//         <CardBody className="p-3">
-//           <h5 className="mb-0 fw-bold" style={{ color: GOLD }}>
-//             Attorneys
-//           </h5>
-//         </CardBody>
-//       </Card>
-
-//       <Card className="border-0 shadow-sm">
-//         <CardBody className="p-4">
-//           <div className="mb-4" style={{ maxWidth: "300px" }}>
-//             <Input
-//               placeholder="Search by name..."
-//               className="rounded-pill"
-//               onChange={e => setSearchTerm(e.target.value)}
-//             />
-//           </div>
-
-//           <Table responsive className="align-middle text-nowrap">
-//             <thead className="table-light">
-//               <tr>
-//                 <th>First Name</th>
-//                 <th>Last Name</th>
-//                 <th>Email</th>
-//                 <th>Phone</th>
-//                 <th>Address</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {filteredData.map(item => (
-//                 <tr key={item.id}>
-//                   <td>{item.firstName}</td>
-//                   <td>{item.lastName}</td>
-//                   <td>{item.email}</td>
-//                   <td>{item.mobile || "-"}</td>
-//                   <td>{item.city || "-"}</td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </Table>
-//         </CardBody>
-//       </Card>
-//     </div>
-//   );
-// };
-
-// export default Attorney;
-
-
-// "use client";
-// import React, { useEffect, useState } from "react";
-// import { Card, CardBody, Table, Input, Button } from "reactstrap";
-// import { ToastContainer, toast } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
-// import authService from "../../../services/authService";
-// import PaginationComponent from "../../../context/Pagination";
-
-// const Attorney = () => {
-//   const [attorneys, setAttorneys] = useState([]);
-//   const [searchTerm, setSearchTerm] = useState("");
-  
-//   // Pagination States
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const itemsPerPage = 5; // एक पेज पर कितने दिखाने हैं
-
- 
-//   useEffect(() => {
-//   const fetchAttorneys = async () => {
-//     try {
-//       console.log("Fetching attorneys...");
-//       const res = await authService.getAllUsers();
-      
-//       console.log("Service Response:", res); // देखें कि success true है या false
-
-//       if (res.success) {
-//         // अगर डेटा res.data.users में है या सीधा res.data में है
-//         const allUsers = res.data?.users || res.data || [];
-//         console.log("All Users received:", allUsers);
-
-//         const attorneysData = allUsers.filter(
-//           u => u.role?.toLowerCase() === "attorney"
-//         );
-        
-//         console.log("Filtered Attorneys:", attorneysData);
-//         setAttorneys(attorneysData);
-//       } else {
-//         toast.error(res.message || "Failed to load users");
-//       }
-//     } catch (err) {
-//       console.error("Component Error:", err);
-//       toast.error("Something went wrong while fetching attorneys");
-//     }
-//   };
- 
-//     fetchAttorneys();
-//   }, []);
-//   // Delete Attorney Function
-//   const handleDelete = async (id) => {
-//     if (window.confirm("Are you sure you want to delete this attorney?")) {
-//       try {
-//         const res = await authService.deleteUser(id);
-//         if (res.success) {
-//           toast.success("Attorney deleted successfully");
-//           // लिस्ट को अपडेट करें बिना पेज रिफ्रेश किए
-//           setAttorneys(attorneys.filter(user => user.id !== id));
-//         } else {
-//           toast.error(res.message || "Delete failed");
-//         }
-//       } catch (err) {
-//         toast.error("Error deleting attorney");
-//       }
-//     }
-//   };
-
-//   // 1. Search Logic
-//   const filteredData = attorneys.filter(u =>
-//     `${u.firstName} ${u.lastName}`
-//       .toLowerCase()
-//       .includes(searchTerm.toLowerCase())
-//   );
-
-//   // 2. Pagination Logic (Filtered डेटा में से सिर्फ वर्तमान पेज का डेटा निकालना)
-//   const indexOfLastItem = currentPage * itemsPerPage;
-//   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-//   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
-
-//   const GOLD = "#eebb5d";
-
-//   return (
-//     <div className="p-3 bg-light min-vh-100">
-//       <ToastContainer />
-
-//       <Card className="mb-4 border-0 shadow-sm">
-//         <CardBody className="p-3">
-//           <h5 className="mb-0 fw-bold" style={{ color: GOLD }}>
-//             Attorneys Management
-//           </h5>
-//         </CardBody>
-//       </Card>
-
-//       <Card className="border-0 shadow-sm">
-//         <CardBody className="p-4">
-//           <div className="mb-4 d-flex justify-content-between align-items-center">
-//             <Input
-//               placeholder="Search by name..."
-//               className="rounded-pill"
-//               style={{ maxWidth: "300px" }}
-//               onChange={e => {
-//                 setSearchTerm(e.target.value);
-//                 setCurrentPage(1); // सर्च करने पर वापस पहले पेज पर जाएँ
-//               }}
-//             />
-//           </div>
-
-//           <Table responsive className="align-middle text-nowrap">
-//             <thead className="table-light">
-//               <tr>
-//                 <th>First Name</th>
-//                 <th>Last Name</th>
-//                 <th>Email</th>
-//                 <th>Phone</th>
-//                 <th>Address</th>
-//                 <th className="text-center">Action</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {currentItems.length > 0 ? (
-//                 currentItems.map(item => (
-//                   <tr key={item.id}>
-//                     <td>{item.firstName}</td>
-//                     <td>{item.lastName}</td>
-//                     <td>{item.email}</td>
-//                     <td>{item.mobile || "-"}</td>
-//                     <td>{item.city || "-"}</td>
-//                     <td className="text-center">
-//                       <Button 
-//                         color="danger" 
-//                         size="sm" 
-//                         outline
-//                         onClick={() => handleDelete(item.id)}
-//                       >
-//                         <i className="bi bi-trash"></i> Delete
-//                       </Button>
-//                     </td>
-//                   </tr>
-//                 ))
-//               ) : (
-//                 <tr>
-//                   <td colSpan="6" className="text-center py-4">No attorneys found.</td>
-//                 </tr>
-//               )}
-//             </tbody>
-//           </Table>
-
-//           {/* Pagination Component का इस्तेमाल */}
-//           <PaginationComponent
-//             totalItems={filteredData.length}
-//             itemsPerPage={itemsPerPage}
-//             currentPage={currentPage}
-//             onPageChange={(pageNumber) => setCurrentPage(pageNumber)}
-//           />
-//         </CardBody>
-//       </Card>
-//     </div>
-//   );
-// };
-
-// export default Attorney;
 "use client";
 import React, { useEffect, useState } from "react";
 import { Card, CardBody, Table, Input, Button } from "reactstrap";
@@ -748,42 +9,28 @@ import PaginationComponent from "../../../context/Pagination";
 const Attorney = () => {
   const [attorneys, setAttorneys] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-
-  // Pagination States
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  useEffect(() => {
-    const fetchAttorneys = async () => {
-      try {
-        const res = await authService.getAllUsers();
-        if (res.success) {
-          const allUsers = res.data?.users || res.data || [];
-          const attorneysData = allUsers.filter(
-            (u) => u.role?.toLowerCase() === "attorney"
-          );
-          setAttorneys(attorneysData);
-        } else {
-          toast.error(res.message || "Failed to load users");
-        }
-      } catch (err) {
-        toast.error("Something went wrong while fetching attorneys");
-      }
-    };
+  useEffect(() => { fetchAttorneys(); }, []);
 
-    fetchAttorneys();
-  }, []);
+  const fetchAttorneys = async () => {
+    try {
+      const res = await authService.getAllAttorneys();
+      const data = res.attorneys || res.data?.attorneys || res.data || [];
+      setAttorneys(data);
+    } catch (err) {
+      toast.error("Failed to load attorneys");
+    }
+  };
 
-  // Delete Attorney
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this attorney?")) {
       try {
-        const res = await authService.deleteUser(id);
-        if (res.success) {
+        const res = await authService.deleteAttorney(id);
+        if (res) {
           toast.success("Attorney deleted successfully");
-          setAttorneys(attorneys.filter((u) => u.id !== id));
-        } else {
-          toast.error(res.message || "Delete failed");
+          setAttorneys(attorneys.filter(u => (u.id || u._id) !== id));
         }
       } catch (err) {
         toast.error("Error deleting attorney");
@@ -791,103 +38,60 @@ const Attorney = () => {
     }
   };
 
-  // 🔹 Search Logic
-  const filteredData = attorneys.filter((u) =>
-    `${u.firstName} ${u.lastName}`
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
+  const filteredData = attorneys.filter(u =>
+    `${u.firstName} ${u.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // 🔹 Pagination Logic
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
-
-  const GOLD = "#eebb5d";
+  const currentItems = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
     <div className="p-3 bg-light min-vh-100">
       <ToastContainer />
-
       <Card className="mb-4 border-0 shadow-sm">
-        <CardBody className="p-3">
-          <h5 className="mb-0 fw-bold" style={{ color: GOLD }}>
-            Attorneys Management
-          </h5>
-        </CardBody>
+        <CardBody className="p-3"><h5 className="mb-0 fw-bold" style={{ color: "#eebb5d" }}>Attorneys Management</h5></CardBody>
       </Card>
 
       <Card className="border-0 shadow-sm">
         <CardBody className="p-4">
-          {/* 🔹 Search (same UI) */}
-          <div className="mb-4 d-flex justify-content-between align-items-center">
-            <Input
-              placeholder="Search by name..."
-              className="rounded-pill"
-              style={{ maxWidth: "300px" }}
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-            />
-          </div>
-
-          <Table responsive className="align-middle text-nowrap">
+          <Input
+            placeholder="Search by name..."
+            className="rounded-pill mb-4"
+            style={{ maxWidth: "300px" }}
+            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+          />
+          <Table responsive className="align-middle">
             <thead className="table-light">
               <tr>
                 <th>S.No</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Email</th>
-                <th>Phone</th>
-                <th>Address</th>
                 <th className="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
-              {currentItems.length > 0 ? (
-                currentItems.map((item, index) => (
-                  <tr key={item.id}>
-                    {/* 🔹 Serial Number */}
-                    <td>
-                      {(currentPage - 1) * itemsPerPage + index + 1}
-                    </td>
-                    <td>{item.firstName}</td>
-                    <td>{item.lastName}</td>
-                    <td>{item.email}</td>
-                    <td>{item.mobile || "-"}</td>
-                    <td>{item.city || "-"}</td>
-                    <td className="text-center">
-                      {/* 🔹 Delete Icon Button */}
-                      <Button
-                        size="sm"
-                        color="white"
-                        className="border shadow-sm text-danger"
-                        onClick={() => handleDelete(item.id)}
-                      >
-                        🗑️
-                      </Button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="7" className="text-center py-4">
-                    No attorneys found.
+              {currentItems.map((item, index) => (
+                <tr key={item.id || item._id}>
+                  <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                  <td className="text-capitalize">{item.firstName}</td>
+                  <td className="text-capitalize">{item.lastName}</td>
+                  <td>{item.email}</td>
+                  <td className="text-center">
+                    {/* FIX: Only One Icon Here */}
+                    <Button 
+                      size="sm" 
+                      color="white" 
+                      className="border shadow-sm text-danger" 
+                      onClick={() => handleDelete(item.id || item._id)}
+                    >
+                      <i className="bi bi-trash"></i>
+                    </Button>
                   </td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </Table>
-
-          {/* Pagination */}
-          <PaginationComponent
-            totalItems={filteredData.length}
-            itemsPerPage={itemsPerPage}
-            currentPage={currentPage}
-            onPageChange={(pageNumber) => setCurrentPage(pageNumber)}
-          />
+          <PaginationComponent totalItems={filteredData.length} itemsPerPage={itemsPerPage} currentPage={currentPage} onPageChange={setCurrentPage} />
         </CardBody>
       </Card>
     </div>

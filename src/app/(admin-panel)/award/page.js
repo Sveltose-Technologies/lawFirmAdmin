@@ -212,84 +212,84 @@
 //           </span>
 //         </ModalHeader>
 //         <ModalBody className="px-4 pb-4">
-//           <Form>
-//             <Row className="gy-3">
-//               <Col xs={12} md={8}>
-//                 <FormGroup>
-//                   <Label>Award Title</Label>
-//                   <Input 
-//                     type="text" 
-//                     placeholder="e.g. Best Law Firm 2025" 
-//                     value={formData.awardTitle} 
-//                     onChange={(e)=>setFormData({...formData, awardTitle: e.target.value})} 
-//                   />
-//                 </FormGroup>
-//               </Col>
-//               <Col xs={12} md={4}>
-//                 <FormGroup>
-//                   <Label>Year</Label>
-//                   <Input 
-//                     type="number" 
-//                     placeholder="2025" 
-//                     value={formData.year} 
-//                     onChange={(e)=>setFormData({...formData, year: e.target.value})} 
-//                   />
-//                 </FormGroup>
-//               </Col>
+          // <Form>
+          //   <Row className="gy-3">
+          //     <Col xs={12} md={8}>
+          //       <FormGroup>
+          //         <Label>Award Title</Label>
+          //         <Input 
+          //           type="text" 
+          //           placeholder="e.g. Best Law Firm 2025" 
+          //           value={formData.awardTitle} 
+          //           onChange={(e)=>setFormData({...formData, awardTitle: e.target.value})} 
+          //         />
+          //       </FormGroup>
+          //     </Col>
+          //     <Col xs={12} md={4}>
+          //       <FormGroup>
+          //         <Label>Year</Label>
+          //         <Input 
+          //           type="number" 
+          //           placeholder="2025" 
+          //           value={formData.year} 
+          //           onChange={(e)=>setFormData({...formData, year: e.target.value})} 
+          //         />
+          //       </FormGroup>
+          //     </Col>
               
-//               <Col xs={12} md={6}>
-//                 <FormGroup>
-//                   <Label>Person Name (Optional)</Label>
-//                   <Input 
-//                     type="text" 
-//                     value={formData.personName} 
-//                     onChange={(e)=>setFormData({...formData, personName: e.target.value})} 
-//                   />
-//                 </FormGroup>
-//               </Col>
-//               <Col xs={12} md={6}>
-//                 <FormGroup>
-//                   <Label>Organization</Label>
-//                   <Input 
-//                     type="text" 
-//                     value={formData.organization} 
-//                     onChange={(e)=>setFormData({...formData, organization: e.target.value})} 
-//                   />
-//                 </FormGroup>
-//               </Col>
+          //     <Col xs={12} md={6}>
+          //       <FormGroup>
+          //         <Label>Person Name (Optional)</Label>
+          //         <Input 
+          //           type="text" 
+          //           value={formData.personName} 
+          //           onChange={(e)=>setFormData({...formData, personName: e.target.value})} 
+          //         />
+          //       </FormGroup>
+          //     </Col>
+          //     <Col xs={12} md={6}>
+          //       <FormGroup>
+          //         <Label>Organization</Label>
+          //         <Input 
+          //           type="text" 
+          //           value={formData.organization} 
+          //           onChange={(e)=>setFormData({...formData, organization: e.target.value})} 
+          //         />
+          //       </FormGroup>
+          //     </Col>
 
-//               <Col xs={12}>
-//                 <FormGroup>
-//                   <Label>Award Banner Image</Label>
-//                   <Input type="file" onChange={(e)=>setFormData({...formData, bannerImage: e.target.files[0]})} />
-//                 </FormGroup>
-//               </Col>
+          //     <Col xs={12}>
+          //       <FormGroup>
+          //         <Label>Award Banner Image</Label>
+          //         <Input type="file" onChange={(e)=>setFormData({...formData, bannerImage: e.target.files[0]})} />
+          //       </FormGroup>
+          //     </Col>
 
-//               <Col xs={12}>
-//                 <FormGroup>
-//                   <Label>Award Description</Label>
-//                   <div className="bg-white border rounded">
-//                     <ReactQuill 
-//                       theme="snow" 
-//                       modules={modules} 
-//                       value={formData.details} 
-//                       onChange={(v)=>setFormData({...formData, details: v})} 
-//                       style={{height: '200px', marginBottom: '50px'}}
-//                     />
-//                   </div>
-//                 </FormGroup>
-//               </Col>
-//             </Row>
+          //     <Col xs={12}>
+          //       <FormGroup>
+          //         <Label>Award Description</Label>
+          //         <div className="bg-white border rounded">
+          //           <ReactQuill 
+          //             theme="snow" 
+          //             modules={modules} 
+          //             value={formData.details} 
+          //             onChange={(v)=>setFormData({...formData, details: v})} 
+          //             style={{height: '200px', marginBottom: '50px'}}
+          //           />
+          //         </div>
+          //       </FormGroup>
+          //     </Col>
+          //   </Row>
 
-//             {/* Global Buttons Consistency */}
-//             <div className="mt-4 d-flex justify-content-start gap-2">
-//               <Button className="btn-gold" style={{ width: '130px' }} onClick={handleSubmit}>
-//                 {isEditing ? 'Update' : 'Save'}
-//               </Button>
-//               <Button outline className="fw-bold" style={{ width: '130px', color: '#666', borderColor: '#ccc' }} onClick={toggle}>
-//                 Cancel
-//               </Button>
-//             </div>
+          //   {/* Global Buttons Consistency */}
+          //   <div className="mt-4 d-flex justify-content-start gap-2">
+          //     <Button className="btn-gold" style={{ width: '130px' }} onClick={handleSubmit}>
+          //       {isEditing ? 'Update' : 'Save'}
+          //     </Button>
+          //     <Button outline className="fw-bold" style={{ width: '130px', color: '#666', borderColor: '#ccc' }} onClick={toggle}>
+          //       Cancel
+          //     </Button>
+          //   </div>
 //           </Form>
 //         </ModalBody>
 //       </Modal>
@@ -540,8 +540,84 @@ const AwardPage = () => {
           {isEditing ? 'Edit Award Details' : 'Register New Award'}
         </ModalHeader>
         <ModalBody>
-          <Form>
-            {/* same modal code as before */}
+                    <Form>
+            <Row className="gy-3">
+              <Col xs={12} md={8}>
+                <FormGroup>
+                  <Label>Award Title</Label>
+                  <Input 
+                    type="text" 
+                    placeholder="e.g. Best Law Firm 2025" 
+                    value={formData.awardTitle} 
+                    onChange={(e)=>setFormData({...formData, awardTitle: e.target.value})} 
+                  />
+                </FormGroup>
+              </Col>
+              <Col xs={12} md={4}>
+                <FormGroup>
+                  <Label>Year</Label>
+                  <Input 
+                    type="number" 
+                    placeholder="2025" 
+                    value={formData.year} 
+                    onChange={(e)=>setFormData({...formData, year: e.target.value})} 
+                  />
+                </FormGroup>
+              </Col>
+              
+              <Col xs={12} md={6}>
+                <FormGroup>
+                  <Label>Person Name (Optional)</Label>
+                  <Input 
+                    type="text" 
+                    value={formData.personName} 
+                    onChange={(e)=>setFormData({...formData, personName: e.target.value})} 
+                  />
+                </FormGroup>
+              </Col>
+              <Col xs={12} md={6}>
+                <FormGroup>
+                  <Label>Organization</Label>
+                  <Input 
+                    type="text" 
+                    value={formData.organization} 
+                    onChange={(e)=>setFormData({...formData, organization: e.target.value})} 
+                  />
+                </FormGroup>
+              </Col>
+
+              <Col xs={12}>
+                <FormGroup>
+                  <Label>Award Banner Image</Label>
+                  <Input type="file" onChange={(e)=>setFormData({...formData, bannerImage: e.target.files[0]})} />
+                </FormGroup>
+              </Col>
+
+              <Col xs={12}>
+                <FormGroup>
+                  <Label>Award Description</Label>
+                  <div className="bg-white border rounded">
+                    <ReactQuill 
+                      theme="snow" 
+                      modules={modules} 
+                      value={formData.details} 
+                      onChange={(v)=>setFormData({...formData, details: v})} 
+                      style={{height: '200px', marginBottom: '50px'}}
+                    />
+                  </div>
+                </FormGroup>
+              </Col>
+            </Row>
+
+            {/* Global Buttons Consistency */}
+            <div className="mt-4 d-flex justify-content-start gap-2">
+              <Button className="btn-gold" style={{ width: '130px' }} onClick={handleSubmit}>
+                {isEditing ? 'Update' : 'Save'}
+              </Button>
+              <Button outline className="fw-bold" style={{ width: '130px', color: '#666', borderColor: '#ccc' }} onClick={toggle}>
+                Cancel
+              </Button>
+            </div>
           </Form>
         </ModalBody>
       </Modal>

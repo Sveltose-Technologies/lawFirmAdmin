@@ -1,314 +1,3 @@
-// import api from "./api";
-
-// const authService = {
-//   // 1. लॉगिन एंडपॉइंट
-//   login: async (email, password) => {
-//     try {
-//       const response = await api.post("/admin/login", { email, password });
-//       console.log('login Response', response);
-      
-//       if (response.data.message==='Admin login successful') {
-//         localStorage.setItem("isLoggedIn", "true");
-//         if (response.data && response.data.user) {
-//           localStorage.setItem("user", JSON.stringify(response.data.user));
-//           localStorage.setItem("token", response.data.user.token);
-//         }
-//         return { success: true, message: response.message };
-//       }
-//       return { success: false, message: response.message };
-//     } catch (error) {
-//       return { success: false, message: typeof error === 'string' ? error : "Login failed" };
-//     }
-//   },
-
-//     getCurrentUser: () => {
-//     const user = localStorage.getItem("user");
-//     return user ? JSON.parse(user) : null;
-//   },
-
-//   // PUT :- /admin/update/:id
-// getEditAdminData: async () => {
-//     try {
-//       const currentUser = authService.getCurrentUser();
-//       if (!currentUser || !currentUser.email) return null;
-
-//       const currentEmail = currentUser.email.trim().toLowerCase();
-
-//       // Admin API call WITHOUT token
-//       const response = await api.get("/admin/getall-adminprofile");
-
-//       if (response.data && response.data.length > 0) {
-//         const adminData = response.data.find(
-//           (admin) =>
-//             admin.email &&
-//             admin.email.trim().toLowerCase() === currentEmail
-//         );
-//         return adminData || null;
-//       }
-
-//       return null;
-//     } catch (error) {
-//       console.error("getEditAdminData error:", error);
-//       return null;
-//     }
-//   },
-// };
-
-
-
-
-//   // 2. Update Admin Profile
-//  updateProfile: async (adminData) => {
-//   try {
-//     const currentUser = authService.getCurrentUser();
-//     if (!currentUser || !currentUser.id) {
-//       throw new Error("No logged-in user found or user ID missing");
-//     }
-
-//     const adminId = currentUser.id;
-//     console.log("Updating admin ID:", adminId);
-
-//     const formData = new FormData();
-
-//     for (const key in adminData) {
-//       if (adminData[key] !== null && adminData[key] !== undefined && adminData[key] !== "") {
-//         formData.append(key, adminData[key]);
-//       }
-//     }
-
-//     // ✅ Log FormData properly
-//     console.log("FormData entries before API call:");
-//     for (let pair of formData.entries()) {
-//       console.log(pair[0], pair[1]);
-//     }
-
-//     const response = await api.put(`/admin/update/${adminId}`, formData, {
-//       headers: { "Content-Type": "multipart/form-data" },
-//     });
-
-//     console.log("Update response:", response.data);
-
-//     return response.data;
-//   } catch (error) {
-//     console.error("Profile update error:", error);
-//     throw error.response?.data || { message: error.message || "Profile update failed" };
-//   }
-// },
-
-
-//   // 3. लॉगआउट
-//   logout: () => {
-//     localStorage.clear();
-//     window.location.href = "/login";
-//   },
-
-
-//   // 5. GET ALL USERS
-//   getAllUsers: async () => {
-//     try {
-//       const res = await api.get('/auth/getall');
-//       return { success: true, data: res.data };
-//     } catch (err) {
-//       return { success: false, message: err.response?.data?.message || 'Failed' };
-//     }
-//   },
-
-//   // 6. DELETE USER BY ID
-//   deleteUser: async (id) => {
-//     try {
-//       const res = await api.delete(`/auth/${id}`);
-//       return { success: true, data: res.data };
-//     } catch (err) {
-//       return { success: false, message: err.response?.data?.message || 'Failed' };
-//     }
-//   },
-
-//   // 7. UPDATE USER
-//   updateUser: async (id, data) => {
-//     try {
-//       const res = await api.put(`/auth/${id}`, data);
-//       return { success: true, data: res.data };
-//     } catch(err) {
-//       return { success: false, message: err.response?.data?.message || 'Update failed' };
-//     }
-//   },
-
-//   // 8. ADD USER
-//   addUser: async (data) => {
-//     try {
-//       const res = await api.post('/auth/register', data);
-//       return { success: true, data: res.data };
-//     } catch(err) {
-//       return { success: false, message: err.response?.data?.message || 'Add failed' };
-//     }
-//   }
-
-
-
-// export default authService;
-
-
-// import api from "./api";
-
-// const authService = {
-//   // 1. लॉगिन एंडपॉइंट
-//   login: async (email, password) => {
-//     try {
-//       const response = await api.post("/admin/login", { email, password });
-//       console.log('login Response', response);
-
-//       if (response.data.message === 'Admin login successful') {
-//         localStorage.setItem("isLoggedIn", "true");
-//         if (response.data && response.data.user) {
-//           localStorage.setItem("user", JSON.stringify(response.data.user));
-//           localStorage.setItem("token", response.data.user.token);
-//         }
-//         return { success: true, message: response.data.message };
-//       }
-//       return { success: false, message: response.data.message };
-//     } catch (error) {
-//       return { success: false, message: typeof error === 'string' ? error : "Login failed" };
-//     }
-//   },
-
-//   // 2. Get current logged-in user
-//   getCurrentUser: () => {
-//   const user = localStorage.getItem("user");
-//   return user ? JSON.parse(user) : null;
-// },
-
-//     // 3. Get admin data for edit (matches currently logged-in admin by email)
-//   getEditAdminData: async () => {
-//     try {
-//       const currentUser = authService.getCurrentUser();
-//       if (!currentUser?.email) {
-//         console.log("No logged-in user found");
-//         return null;
-//       }
-
-//       const currentEmail = currentUser.email.trim().toLowerCase();
-
-//       // Fetch all admin profiles
-//       const response = await api.get("/admin/getall-adminprofile");
-//       const admins = response.data;
-
-//       if (!admins || !admins.length) return null;
-
-//       // Find admin that matches the logged-in email
-//       const matchedAdmin = admins.find(
-//         (admin) =>
-//           admin.email?.trim().toLowerCase() === currentEmail
-//       );
-
-//       if (!matchedAdmin) {
-//         console.log("No matching admin found in API");
-//         return null;
-//       }
-
-//       console.log("Matched admin data:", matchedAdmin);
-//       return matchedAdmin;
-//     } catch (error) {
-//       console.error("getEditAdminData error:", error);
-//       return null;
-//     }
-//   },
-
-//   // 4. Update admin profile
-//   updateProfile: async (adminData) => {
-//     try {
-//       const currentUser = authService.getCurrentUser();
-//       if (!currentUser?.id) {
-//         throw new Error("No logged-in user found or user ID missing");
-//       }
-
-//       const adminId = currentUser.id;
-//       console.log("Updating admin ID:", adminId);
-
-//       const formData = new FormData();
-//       for (const key in adminData) {
-//         if (adminData[key] !== null && adminData[key] !== undefined && adminData[key] !== "") {
-//           formData.append(key, adminData[key]);
-//         }
-//       }
-
-//       const response = await api.put(`/admin/update/${adminId}`, formData, {
-//         headers: { "Content-Type": "multipart/form-data" },
-//       });
-
-//       console.log("Update response:", response.data);
-//       return response.data;
-//     } catch (error) {
-//       console.error("Profile update error:", error);
-//       throw error.response?.data || { message: error.message || "Profile update failed" };
-//     }
-//   },
-
-
-//   // 4. Update admin profile
-//   updateProfile: async (adminData) => {
-//     try {
-//       const currentUser = authService.getCurrentUser();
-//       if (!currentUser || !currentUser.id) {
-//         throw new Error("No logged-in user found or user ID missing");
-//       }
-
-//       const adminId = currentUser.id;
-//       console.log("Updating admin ID:", adminId);
-
-//       const formData = new FormData();
-//       for (const key in adminData) {
-//         if (adminData[key] !== null && adminData[key] !== undefined && adminData[key] !== "") {
-//           formData.append(key, adminData[key]);
-//         }
-//       }
-
-//       // Log FormData entries
-//       console.log("FormData entries before API call:");
-//       for (let pair of formData.entries()) {
-//         console.log(pair[0], pair[1]);
-//       }
-
-//       const response = await api.put(`/admin/update/${adminId}`, formData, {
-//         headers: { "Content-Type": "multipart/form-data" },
-//       });
-
-//       console.log("Update response:", response.data);
-//       return response.data;
-//     } catch (error) {
-//       console.error("Profile update error:", error);
-//       throw error.response?.data || { message: error.message || "Profile update failed" };
-//     }
-//   },
-
-//   // 5. लॉगआउट
-//   logout: () => {
-//     localStorage.clear();
-//     window.location.href = "/login";
-//   },
-
-//  getAllUsers: async () => {
-//     try {
-//       const res = await api.get("/auth/getall");
-//       return { success: true, data: res.data };
-//     } catch (err) {
-//       console.error("getAllUsers error:", err.response?.data || err.message);
-//       return { success: false, message: err.response?.data?.message || "Failed to get users" };
-//     }
-//   },
-
-//   // 2. DELETE USER BY ID
-//   deleteUser: async (id) => {
-//     try {
-//       const res = await api.delete(`/auth/${id}`);
-//       return { success: true, data: res.data };
-//     } catch (err) {
-//       console.error("deleteUser error:", err.response?.data || err.message);
-//       return { success: false, message: err.response?.data?.message || "Failed to delete user" };
-//     }
-//   },
-
-// }
-// export default authService;
 
 
 
@@ -316,29 +5,29 @@ import api from "./api";
 
 const authService = {
   // Base URL for Images
-  IMG_URL: "http://72.62.87.252:3000", 
+  IMG_URL: "http://72.62.87.252:3000",
 
-  // ==========================================
-  // HELPER: GET FULL IMAGE URL
-  // ==========================================
   getImgUrl: (path) => {
-    if (!path) return "https://via.placeholder.com/150";
-    
-    // Agar path already full URL hai (http se shuru ho raha hai)
+    if (!path || path === "null" || path === "undefined") {
+      return "https://placehold.co/70x45?text=No+Image";
+    }
+
     if (path.startsWith("http")) return path;
 
-    // Path ke aage se '/' hatayein agar hai toh, double slash se bachne ke liye
+    // Remove leading slash if it exists to avoid double slashes
     const cleanPath = path.startsWith("/") ? path.substring(1) : path;
 
-    const fullUrl = `${authService.IMG_URL}/${cleanPath}`;
-    
-    // Console log debugging ke liye (Ise baad mein hata sakte hain)
-    // console.log("🖼️ Image Loading From:", fullUrl);
-    
-    return fullUrl;
+    // The base URL
+    const BASE = "http://72.62.87.252:3000";
+
+    // Check if the path already contains 'uploads'
+    if (cleanPath.startsWith("uploads/")) {
+      return `${BASE}/${cleanPath}`;
+    }
+
+    // If it's just a filename, add uploads/
+    return `${BASE}/uploads/${cleanPath}`;
   },
-
-
   // ==========================================
   // SECTION: AUTHENTICATION
   // ==========================================
@@ -351,15 +40,18 @@ const authService = {
 
       if (response.data && response.data.admin?.token) {
         const adminData = response.data.admin;
-        
+
         localStorage.setItem("token", adminData.token);
-        localStorage.setItem("user", JSON.stringify(adminData)); 
+        localStorage.setItem("user", JSON.stringify(adminData));
         localStorage.setItem("isLoggedIn", "true");
 
         return { success: true, message: response.data.message };
       }
-      
-      return { success: false, message: response.data.message || "Invalid credentials" };
+
+      return {
+        success: false,
+        message: response.data.message || "Invalid credentials",
+      };
     } catch (error) {
       console.error("Login error:", error);
       return {
@@ -376,7 +68,6 @@ const authService = {
       window.location.href = "/login";
     }
   },
-
 
   // ==========================================
   // SECTION: ADMIN PROFILE
@@ -404,7 +95,10 @@ const authService = {
       return { success: true, data: res.data };
     } catch (err) {
       console.error("❌ Update Error:", err);
-      return { success: false, message: err.response?.data?.message || "Update failed" };
+      return {
+        success: false,
+        message: err.response?.data?.message || "Update failed",
+      };
     }
   },
 
@@ -417,16 +111,15 @@ const authService = {
     return null;
   },
 
-
   // ==========================================
-  // SECTION: USER MANAGEMENT 
+  // SECTION: USER MANAGEMENT
   // ==========================================
 
   // [GET ALL] - FETCH ALL USERS
   getAllUsers: async () => {
     try {
       const res = await api.get("/auth/getall");
-      console.log("Raw API Response:", res.data); 
+      console.log("Raw API Response:", res.data);
       return { success: true, data: res.data };
     } catch (err) {
       console.error("getAllUsers Error:", err.response || err);
@@ -446,7 +139,6 @@ const authService = {
       return { success: false, message: "Delete failed" };
     }
   },
-
 
   // ==========================================
   // SECTION: CASE CATEGORIES
@@ -494,371 +186,123 @@ const authService = {
     }
   },
 
-
   // ==========================================
-  // SECTION: CAPABILITY CATEGORIES (Multipart/Form-Data)
+  // SECTION: CAPABILITY CATEGORIES (Multipart/FormData)
   // ==========================================
-
-  // [GET ALL] - FETCH ALL CAPABILITY CATEGORIES
- // services/authService.js
-
- getAllCapabilityCategories: async () => {
-    try {
-      console.log("📢 Sending GET request to /capability-categories/get-all");
-      const response = await api.get("/capability-categories/get-all");
-      console.log("✅ GET ALL CATEGORIES RESPONSE:", response.data);
-      return response.data; // सीधा डेटा रिटर्न करें
-    } catch (error) {
-      console.error("❌ GET ALL API Error:", error);
-      return { success: false, data: [] };
-    }
+  getAllCapabilityCategories: async () => {
+    const response = await api.get("/capability-categories/get-all");
+    return response.data;
   },
 
-  // [CREATE] - CAPABILITY CATEGORY
-  createCapabilityCategory: async (data) => {
-    try {
-      console.log("📢 Sending CREATE request with data:", data);
+  // 2. Create Method ko update karein (Taki ID 25 jaisi galti na ho)
+  createCapabilityCategory: async (formData) => {
+    // Yahan formData component se seedha pass ho raha hai
+    const response = await api.post("/capability-categories/create", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  },
+  // authService.js ke andar update method
+  updateCapabilityCategory: async (id, payload) => {
+    const data = new FormData();
+    data.append("categoryName", payload.categoryName);
+    data.append("description", payload.description);
 
-      const formData = new FormData();
-      formData.append("categoryName", data.categoryName);
-      formData.append("description", data.description || "");
+    // Sirf tabhi append karein agar user ne nayi file select ki ho
+    if (payload.bannerImage instanceof File) {
+      data.append("bannerImage", payload.bannerImage);
+    }
 
-      if (data.bannerImage) {
-        formData.append("bannerImage", data.bannerImage);
-      }
-
-      const response = await api.post("/capability-categories/create", formData, {
+    const response = await api.put(
+      `/capability-categories/update/${id}`,
+      data,
+      {
         headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      console.log("✅ CREATE CATEGORY RESPONSE:", response.data);
-      return response.data;
-    } catch (error) {
-      console.error("❌ CREATE API Error:", error);
-      return { success: false, message: error.message };
-    }
+      },
+    );
+    return response.data;
   },
 
-  // [UPDATE] - CAPABILITY CATEGORY
-  updateCapabilityCategory: async (id, data) => {
-    try {
-      console.log(`📢 Sending UPDATE request for ID: ${id} with data:`, data);
-
-      const formData = new FormData();
-      formData.append("categoryName", data.categoryName);
-      formData.append("description", data.description || "");
-
-      if (data.bannerImage) {
-        formData.append("bannerImage", data.bannerImage);
-      }
-
-      const response = await api.put(`/capability-categories/update/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      console.log("🟡 UPDATE CATEGORY RESPONSE:", response.data);
-      return response.data;
-    } catch (error) {
-      console.error("❌ UPDATE API Error:", error);
-      return { success: false, message: error.message };
-    }
-  },
-
-  // [DELETE] - CAPABILITY CATEGORY
   deleteCapabilityCategory: async (id) => {
-    try {
-      console.log(`📢 Sending DELETE request for ID: ${id}`);
-      const response = await api.delete(`/capability-categories/delete/${id}`);
-      console.log("🔴 DELETE CATEGORY RESPONSE:", response.data);
-      return response.data;
-    } catch (error) {
-      console.error("❌ DELETE API Error:", error);
-      return { success: false, message: error.message };
-    }
+    const response = await api.delete(`/capability-categories/delete/${id}`);
+    return response.data;
   },
 
   // ==========================================
-// SECTION: CAPABILITY SUBCATEGORIES API
-// ==========================================
-
-
-// [GET ALL] - FETCH ALL SUBCATEGORIES
-getAllCapabilitySubCategories: async () => {
-  try {
+  // SECTION: CAPABILITY SUBCATEGORIES (Multipart/FormData)
+  // ==========================================
+  getAllCapabilitySubCategories: async () => {
     const res = await api.get("/capability-subcategory/getall-subcategory");
-    console.log("Subcategory API Check:", res.data);
-    // आपके कंसोल के अनुसार डेटा 'data' फील्ड में है
-    return { success: true, data: res.data.data || [] };
-  } catch (err) {
-    return { success: false, message: "Fetch failed" };
-  }
-},
-// [CREATE] - ADD NEW SUBCATEGORY (FormData)
-createCapabilitySubCategory: async (subData) => {
-  try {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const adminId = user?.id || 3;
+    return { success: true, data: res.data.data || res.data || [] };
+  },
 
-    const formData = new FormData();
-    formData.append("adminId", adminId);
-    formData.append("categoryId", subData.categoryId); // Category Selection
-    formData.append("subcategoryName", subData.subcategoryName);
-    formData.append("description", subData.description);
-    
-    if (subData.bannerImage) {
-      formData.append("bannerImage", subData.bannerImage);
-    }
-
+  createCapabilitySubCategory: async (formData) => {
+    // Hum component se seedha FormData bhejenge
     const res = await api.post("/capability-subcategory/create", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
-    return { success: true, data: res.data };
-  } catch (err) {
-    return { success: false, message: err.response?.data?.message || "Create failed" };
-  }
-},
+    return res.data;
+  },
 
-// [UPDATE] - EDIT SUBCATEGORY
-updateCapabilitySubCategory: async (id, subData) => {
-  try {
-    const formData = new FormData();
-    formData.append("categoryId", subData.categoryId);
-    formData.append("subcategoryName", subData.subcategoryName);
-    formData.append("description", subData.description);
-    
-    if (subData.bannerImage instanceof File) {
-      formData.append("bannerImage", subData.bannerImage);
-    }
-
-    const res = await api.put(`/capability-subcategory/update/${id}`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    return { success: true, data: res.data };
-  } catch (err) {
-    return { success: false, message: "Update failed" };
-  }
-},
-
-// [DELETE] - DELETE SUBCATEGORY
-deleteCapabilitySubCategory: async (id) => {
-  try {
+  updateCapabilitySubCategory: async (id, formData) => {
+    const res = await api.put(
+      `/capability-subcategory/update/${id}`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      },
+    );
+    return res.data;
+  },
+  deleteCapabilitySubCategory: async (id) => {
     const res = await api.delete(`/capability-subcategory/delete/${id}`);
-    return { success: true, data: res.data };
-  } catch (err) {
-    return { success: false, message: "Delete failed" };
-  }
-},
-
-// ==========================================
-  // SECTION: LOCATION COUNTRY
-  // ==========================================
-
-  // [GET ALL] - FETCH ALL COUNTRIES
-  getAllCountries: async () => {
-    try {
-      console.log("📢 Fetching all countries...");
-      const res = await api.get("/location-country/getall");
-      console.log("✅ Get All Countries Response:", res.data);
-      return { success: true, data: res.data };
-    } catch (err) {
-      console.error("❌ Get All Countries Error:", err);
-      return { success: false, message: "Failed to fetch countries" };
-    }
+    return res.data;
   },
-
-  // [CREATE] - ADD NEW COUNTRY
-  createCountry: async (countryData) => {
-    try {
-      const user = authService.getCurrentUser();
-      const payload = { 
-        ...countryData, 
-        adminId: user?.id || 1 
-      };
-      console.log("📢 Creating Country with payload:", payload);
-      const res = await api.post("/location-country/create", payload);
-      console.log("✅ Create Country Response:", res.data);
-      return { success: true, data: res.data };
-    } catch (err) {
-      console.error("❌ Create Country Error:", err);
-      return { success: false, message: "Failed to create country" };
-    }
-  },
-
-  // [UPDATE] - EDIT COUNTRY
-  updateCountry: async (id, countryData) => {
-    try {
-      console.log(`📢 Updating Country ID: ${id} with:`, countryData);
-      const res = await api.put(`/location-country/update/${id}`, countryData);
-      console.log("✅ Update Country Response:", res.data);
-      return { success: true, data: res.data };
-    } catch (err) {
-      console.error("❌ Update Country Error:", err);
-      return { success: false, message: "Update failed" };
-    }
-  },
-
-  // [DELETE] - DELETE COUNTRY
-  deleteCountry: async (id) => {
-    try {
-      console.log(`📢 Deleting Country ID: ${id}`);
-      const res = await api.delete(`/location-country/delete/${id}`);
-      console.log("✅ Delete Country Response:", res.data);
-      return { success: true, data: res.data };
-    } catch (err) {
-      console.error("❌ Delete Country Error:", err);
-      return { success: false, message: "Delete failed" };
-    }
-  },
-
 
   // ==========================================
-  // SECTION: LOCATION CITY (Multipart/Form-Data for Image)
+  // SECTION: CMS CONTENT (JSON Data)
   // ==========================================
-
-  // [GET ALL] - FETCH ALL CITIES
-  getAllCities: async (countryId = null) => {
-    try {
-      // Agar countryId pass ki hai toh filter query lagayenge
-      const url = countryId ? `/location-city/getall?countryId=${countryId}` : "/location-city/getall";
-      console.log(`📢 Fetching cities. URL: ${url}`);
-      const res = await api.get(url);
-      console.log("✅ Get All Cities Response:", res.data);
-      return { success: true, data: res.data };
-    } catch (err) {
-      console.error("❌ Get Cities Error:", err);
-      return { success: false, message: "Failed to fetch cities" };
-    }
+  getAllCMSCategories: async () => {
+    const response = await api.get("/cms-category/getall");
+    return response.data;
   },
 
-  // [CREATE] - ADD NEW CITY
-  createCity: async (cityData) => {
-    try {
-      const user = authService.getCurrentUser();
-      const formData = new FormData();
-      formData.append("adminId", user?.id || 1);
-      formData.append("countryId", cityData.countryId);
-      formData.append("cityName", cityData.cityName);
-      formData.append("address", cityData.address);
-      formData.append("phoneNo", cityData.phoneNo);
-      formData.append("faxNo", cityData.faxNo);
-      
-      if (cityData.image) {
-        formData.append("image", cityData.image);
-      }
-
-      console.log("📢 Creating City (FormData)...");
-      const res = await api.post("/location-city/create", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      console.log("✅ Create City Response:", res.data);
-      return { success: true, data: res.data };
-    } catch (err) {
-      console.error("❌ Create City Error:", err);
-      return { success: false, message: "Create city failed" };
-    }
+  createCMSCategory: async (data) => {
+    // API Expects: { adminId, categoryId, subcategoryIds, content }
+    const response = await api.post("/cms-category/create", data);
+    return response.data;
   },
 
-  // [UPDATE] - EDIT CITY
-  updateCity: async (id, cityData) => {
-    try {
-      const formData = new FormData();
-      formData.append("countryId", cityData.countryId);
-      formData.append("cityName", cityData.cityName);
-      formData.append("address", cityData.address);
-      formData.append("phoneNo", cityData.phoneNo);
-      formData.append("faxNo", cityData.faxNo);
-      
-      if (cityData.image instanceof File) {
-        formData.append("image", cityData.image);
-      }
-
-      console.log(`📢 Updating City ID: ${id}...`);
-      const res = await api.put(`/location-city/update/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      console.log("✅ Update City Response:", res.data);
-      return { success: true, data: res.data };
-    } catch (err) {
-      console.error("❌ Update City Error:", err);
-      return { success: false, message: "Update city failed" };
-    }
+  updateCMSCategory: async (id, data) => {
+    const response = await api.put(`/cms-category/update/${id}`, data);
+    return response.data;
   },
 
-  // [DELETE] - DELETE CITY
-  deleteCity: async (id) => {
-    try {
-      console.log(`📢 Deleting City ID: ${id}`);
-      const res = await api.delete(`/location-city/delete/${id}`);
-      console.log("✅ Delete City Response:", res.data);
-      return { success: true, data: res.data };
-    } catch (err) {
-      console.error("❌ Delete City Error:", err);
-      return { success: false, message: "Delete city failed" };
-    }
+  deleteCMSCategory: async (id) => {
+    const response = await api.delete(`/cms-category/delete/${id}`);
+    return response.data;
   },
 
-
-  // ==========================================
-  // SECTION: LOCATION CMS
-  // ==========================================
-
-  // [GET ALL] - FETCH ALL CMS CONTENT
-  getAllLocationCMS: async () => {
-    try {
-      console.log("📢 Fetching all Location CMS...");
-      const res = await api.get("/location-cms/getall");
-      console.log("✅ Get All CMS Response:", res.data);
-      return { success: true, data: res.data };
-    } catch (err) {
-      console.error("❌ Get CMS Error:", err);
-      return { success: false, message: "Failed to fetch CMS" };
-    }
+  getAllCMSSubcategories: async () => {
+    const response = await api.get("/cms-subcategory/getall");
+    return response.data;
   },
 
-  // [CREATE] - ADD NEW CMS CONTENT
-  createLocationCMS: async (cmsData) => {
-    try {
-      const user = authService.getCurrentUser();
-      const payload = { 
-        ...cmsData, 
-        adminId: user?.id || 1 
-      };
-      console.log("📢 Creating CMS with payload:", payload);
-      const res = await api.post("/location-cms/create", payload);
-      console.log("✅ Create CMS Response:", res.data);
-      return { success: true, data: res.data };
-    } catch (err) {
-      console.error("❌ Create CMS Error:", err);
-      return { success: false, message: "Create CMS failed" };
-    }
+  createCMSSubcategory: async (data) => {
+    const response = await api.post("/cms-subcategory/create", data);
+    return response.data;
   },
 
-  // [UPDATE] - EDIT CMS CONTENT
-  updateLocationCMS: async (id, cmsData) => {
-    try {
-      console.log(`📢 Updating CMS ID: ${id} with:`, cmsData);
-      const res = await api.put(`/location-cms/update/${id}`, cmsData);
-      console.log("✅ Update CMS Response:", res.data);
-      return { success: true, data: res.data };
-    } catch (err) {
-      console.error("❌ Update CMS Error:", err);
-      return { success: false, message: "Update CMS failed" };
-    }
+  updateCMSSubcategory: async (id, data) => {
+    const response = await api.put(`/cms-subcategory/update/${id}`, data);
+    return response.data;
   },
 
-  // [DELETE] - DELETE CMS CONTENT
-  deleteLocationCMS: async (id) => {
-    try {
-      console.log(`📢 Deleting CMS ID: ${id}`);
-      const res = await api.delete(`/location-cms/delete/${id}`);
-      console.log("✅ Delete CMS Response:", res.data);
-      return { success: true, data: res.data };
-    } catch (err) {
-      console.error("❌ Delete CMS Error:", err);
-      return { success: false, message: "Delete CMS failed" };
-    }
+  deleteCMSSubcategory: async (id) => {
+    const response = await api.delete(`/cms-subcategory/delete/${id}`);
+    return response.data;
   },
-
+  //ourfirm
   getAllOurFirm: async () => {
     try {
       console.log("📢 Fetching Our Firm data...");
@@ -875,8 +319,10 @@ deleteCapabilitySubCategory: async (id) => {
     try {
       console.log("📢 Creating Our Firm entry...");
       // FormData console log helper
-      for (let pair of formData.entries()) { console.log(pair[0] + ': ' + pair[1]); }
-      
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ": " + pair[1]);
+      }
+
       const res = await api.post("/ourfirm/create", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -913,7 +359,6 @@ deleteCapabilitySubCategory: async (id) => {
       return { success: false, message: "Delete failed" };
     }
   },
-
 
   // ==========================================
   // SECTION: AWARDS (About Us)
@@ -967,7 +412,7 @@ deleteCapabilitySubCategory: async (id) => {
       return { success: false, message: "Delete failed" };
     }
   },
-// ==========================================
+  // ==========================================
   // SECTION: PROMOTER (About Us)
   // ==========================================
 
@@ -1021,20 +466,20 @@ deleteCapabilitySubCategory: async (id) => {
       console.error("❌ Delete Promoter Error:", err);
       return { success: false, message: "Delete failed" };
     }
-},
+  },
 
-// SECTION: TERMS & CONDITIONS 
- getAllTerms: async () => {
-  try {
-    console.log("📢 Fetching all Terms & Conditions...");
-    const res = await api.get("/terms-condition/getall");
-    console.log("✅ Get Terms Response:", res.data);
-    return { success: true, data: res.data };
-  } catch (err) {
-    console.error("❌ Get Terms Error:", err);
-    return { success: false, message: "Fetch failed" };
-  }
-},
+  // SECTION: TERMS & CONDITIONS
+  getAllTerms: async () => {
+    try {
+      console.log("📢 Fetching all Terms & Conditions...");
+      const res = await api.get("/terms-condition/getall");
+      console.log("✅ Get Terms Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Get Terms Error:", err);
+      return { success: false, message: "Fetch failed" };
+    }
+  },
 
   createTerm: async (data) => {
     try {
@@ -1065,21 +510,12 @@ deleteCapabilitySubCategory: async (id) => {
     }
   },
 
-
   getCurrentUser: () => {
     if (typeof window !== "undefined") {
       const user = localStorage.getItem("user");
       return user ? JSON.parse(user) : null;
     }
     return null;
-  },
-
-  IMG_URL: "http://72.62.87.252:3000",
-
-  getImgUrl: (path) => {
-    if (!path) return "https://via.placeholder.com/150";
-    const cleanPath = path.startsWith("/") ? path.substring(1) : path;
-    return `${authService.IMG_URL}/${cleanPath}`;
   },
 
   // =========================
@@ -1150,5 +586,617 @@ deleteCapabilitySubCategory: async (id) => {
       return { success: false, message: "Fetch failed" };
     }
   },
-}
+  // ==========================================
+  // SECTION: NEWS MANAGEMENT
+  // ==========================================
+
+  // [GET ALL] - FETCH ALL NEWS
+  getAllNews: async () => {
+    try {
+      console.log("📢 Fetching all news...");
+      const res = await api.get("/news/getall");
+      console.log("✅ Get All News Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Get News Error:", err);
+      return { success: false, message: "Failed to fetch news" };
+    }
+  },
+
+  // [CREATE] - ADD NEW NEWS (Multipart/Form-Data)
+  createNews: async (formData) => {
+    try {
+      console.log("📢 Creating News...");
+      const res = await api.post("/news/create", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("✅ Create News Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Create News Error:", err);
+      return { success: false, message: "Create news failed" };
+    }
+  },
+
+  // [UPDATE] - EDIT NEWS (Multipart/Form-Data)
+  updateNews: async (id, formData) => {
+    try {
+      console.log(`📢 Updating News ID: ${id}...`);
+      const res = await api.put(`/news/update/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("✅ Update News Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Update News Error:", err);
+      return { success: false, message: "Update news failed" };
+    }
+  },
+
+  // [DELETE] - DELETE NEWS
+  deleteNews: async (id) => {
+    try {
+      console.log(`📢 Deleting News ID: ${id}`);
+      const res = await api.delete(`/news/delete/${id}`);
+      console.log("✅ Delete News Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Delete News Error:", err);
+      return { success: false, message: "Delete news failed" };
+    }
+  },
+
+  getAllClients: async () => {
+    const response = await api.get("/client/getall");
+    return response.data;
+  },
+  deleteClient: async (id) => {
+    const response = await api.delete(`/client/delete/${id}`);
+    return response.data;
+  },
+
+  // --- ATTORNEY APIs ---
+  getAllAttorneys: async () => {
+    const response = await api.get("/attorney/getall");
+    return response.data;
+  },
+  deleteAttorney: async (id) => {
+    const response = await api.delete(`/attorney/delete/${id}`);
+    return response.data;
+  },
+
+  // ==========================================
+  // SECTION: LOCATION CMS
+  // ==========================================
+
+  // [GET ALL] - FETCH ALL CMS CONTENT
+  getAllLocationCMS: async () => {
+    try {
+      console.log("📢 Fetching all Location CMS...");
+      const res = await api.get("/location-cms/getall");
+      console.log("✅ Get All CMS Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Get CMS Error:", err);
+      return { success: false, message: "Failed to fetch CMS" };
+    }
+  },
+
+  // [CREATE] - ADD NEW CMS CONTENT
+  createLocationCMS: async (cmsData) => {
+    try {
+      const user = authService.getCurrentUser();
+      const payload = {
+        ...cmsData,
+        adminId: user?.id || 1,
+      };
+      console.log("📢 Creating CMS with payload:", payload);
+      const res = await api.post("/location-cms/create", payload);
+      console.log("✅ Create CMS Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Create CMS Error:", err);
+      return { success: false, message: "Create CMS failed" };
+    }
+  },
+
+  // [UPDATE] - EDIT CMS CONTENT
+  updateLocationCMS: async (id, cmsData) => {
+    try {
+      console.log(`📢 Updating CMS ID: ${id} with:`, cmsData);
+      const res = await api.put(`/location-cms/update/${id}`, cmsData);
+      console.log("✅ Update CMS Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Update CMS Error:", err);
+      return { success: false, message: "Update CMS failed" };
+    }
+  },
+
+  // [DELETE] - DELETE CMS CONTENT
+  deleteLocationCMS: async (id) => {
+    try {
+      console.log(`📢 Deleting CMS ID: ${id}`);
+      const res = await api.delete(`/location-cms/delete/${id}`);
+      console.log("✅ Delete CMS Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Delete CMS Error:", err);
+      return { success: false, message: "Delete CMS failed" };
+    }
+  },
+
+  // ==========================================
+  // SECTION: LOCATIONS (Missing functions added here)
+  // ==========================================
+  // ==========================================
+  // SECTION: LOCATION COUNTRY
+  // ==========================================
+  getAllCountries: async () => {
+    try {
+      const res = await api.get("/location-country/getall");
+      return res.data; // Response structure is {success: true, data: []}
+    } catch (err) {
+      console.error("❌ getAllCountries Error:", err);
+      throw err;
+    }
+  },
+
+  createLocationCountry: async (data) => {
+    try {
+      // Keys: adminId, countryName, content
+      const res = await api.post("/location-country/create", data);
+      return res.data;
+    } catch (err) {
+      console.error("❌ createLocationCountry Error:", err);
+      throw err;
+    }
+  },
+
+  updateLocationCountry: async (id, data) => {
+    try {
+      // Keys: countryName, content
+      const res = await api.put(`/location-country/update/${id}`, data);
+      return res.data;
+    } catch (err) {
+      console.error("❌ updateLocationCountry Error:", err);
+      throw err;
+    }
+  },
+
+  deleteLocationCountry: async (id) => {
+    try {
+      const res = await api.delete(`/location-country/delete/${id}`);
+      return res.data;
+    } catch (err) {
+      console.error("❌ deleteLocationCountry Error:", err);
+      throw err;
+    }
+  },
+
+  // ==========================================
+  // SECTION: LOCATION CITY
+  // ==========================================
+  getAllCities: async () => {
+    try {
+      const res = await api.get("/location-city/getall");
+      return res.data; // Response structure is {success: true, data: []}
+    } catch (err) {
+      console.error("❌ getAllCities Error:", err);
+      throw err;
+    }
+  },
+
+  createLocationCity: async (formData) => {
+    try {
+      // Expects FormData: adminId, countryId, cityName, address, phoneNo, faxNo, image
+      const res = await api.post("/location-city/create", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return res.data;
+    } catch (err) {
+      console.error("❌ createLocationCity Error:", err);
+      throw err;
+    }
+  },
+
+  updateLocationCity: async (id, formData) => {
+    try {
+      // Expects FormData: cityName, address, phoneNo, faxNo, image
+      const res = await api.put(`/location-city/update/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return res.data;
+    } catch (err) {
+      console.error("❌ updateLocationCity Error:", err);
+      throw err;
+    }
+  },
+
+  deleteLocationCity: async (id) => {
+    try {
+      const res = await api.delete(`/location-city/delete/${id}`);
+      return res.data;
+    } catch (err) {
+      console.error("❌ deleteLocationCity Error:", err);
+      throw err;
+    }
+  },
+  // ==========================================
+  // SECTION: EVENTS MANAGEMENT
+  // ==========================================
+
+  getAllEvents: async () => {
+    try {
+      const res = await api.get("/event/getall");
+      console.log("📢 Fetch All Events Response:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Get All Events Error:", err);
+      return { success: false, data: [] };
+    }
+  },
+
+  createEvent: async (formData) => {
+    try {
+      console.log("🚀 Creating Event...");
+      const res = await api.post("/event/create", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Create Event Error:", err);
+      throw err;
+    }
+  },
+
+  updateEvent: async (id, formData) => {
+    try {
+      console.log(`🚀 Updating Event ID: ${id}...`);
+      const res = await api.put(`/event/update/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Update Event Error:", err);
+      throw err;
+    }
+  },
+
+  deleteEvent: async (id) => {
+    try {
+      const res = await api.delete(`/event/delete/${id}`);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Delete Event Error:", err);
+      return { success: false, message: "Delete failed" };
+    }
+  },
+
+  // ==========================================
+  // SECTION: CAREER MANAGEMENT
+  // ==========================================
+
+  getAllCareers: async () => {
+    try {
+      const res = await api.get("/career/getall");
+      console.log("📢 Career Get All:", res.data);
+      return { success: true, data: res.data };
+    } catch (err) {
+      console.error("❌ Career Fetch Error:", err);
+      return { success: false, data: [] };
+    }
+  },
+
+  createCareer: async (formData) => {
+    // formData will be Multipart/FormData because of bannerImage
+    const res = await api.post("/career/create", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return { success: true, data: res.data };
+  },
+
+  updateCareer: async (id, formData) => {
+    const res = await api.put(`/career/update/${id}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return { success: true, data: res.data };
+  },
+
+  deleteCareer: async (id) => {
+    const res = await api.delete(`/career/delete/${id}`);
+    return { success: true, data: res.data };
+  },
+};
+
 export default authService;
+
+
+// import api from "./api";
+
+// const authService = {
+//   // Base URL for Images
+//   IMG_URL: "http://72.62.87.252:3000",
+
+//   // ==========================================
+//   // HELPERS
+//   // ==========================================
+// getImgUrl: (path) => {
+//   if (!path || path === "null" || path === undefined) {
+//     return "https://placehold.co/60x40?text=No+Image";
+//   }
+  
+//   if (path.startsWith("http")) return path;
+
+//   // Path clean karein (agar shuru mein slash hai toh hata dein)
+//   const cleanPath = path.startsWith("/") ? path.substring(1) : path;
+  
+//   // Final URL (Ensure Base URL matches exactly where images are served)
+//   return `http://72.62.87.252:3000/${cleanPath}`;
+// },
+//   getCurrentUser: () => {
+//     if (typeof window !== "undefined") {
+//       const user = localStorage.getItem("user");
+//       return user ? JSON.parse(user) : null;
+//     }
+//     return null;
+//   },
+
+//   // ==========================================
+//   // SECTION: AUTHENTICATION
+//   // ==========================================
+//   login: async (email, password) => {
+//     try {
+//       const response = await api.post("/admin/login", { email, password });
+//       if (response.data && response.data.admin?.token) {
+//         const adminData = response.data.admin;
+//         localStorage.setItem("token", adminData.token);
+//         localStorage.setItem("user", JSON.stringify(adminData));
+//         localStorage.setItem("isLoggedIn", "true");
+//         return { success: true, message: response.data.message };
+//       }
+//       return { success: false, message: response.data.message || "Invalid credentials" };
+//     } catch (error) {
+//       return { success: false, message: error.response?.data?.message || "Login failed" };
+//     }
+//   },
+
+//   logout: () => {
+//     if (typeof window !== "undefined") {
+//       localStorage.clear();
+//       window.location.href = "/login";
+//     }
+//   },
+
+//   // ==========================================
+//   // SECTION: ADMIN PROFILE
+//   // ==========================================
+//   getAdminProfile: async () => {
+//     const res = await api.get("/admin/getall-adminprofile");
+//     return { success: true, data: res.data };
+//   },
+
+//   updateAdminProfile: async (id, formData) => {
+//     const res = await api.put(`/admin/update/${id}`, formData, {
+//       headers: { "Content-Type": "multipart/form-data" },
+//     });
+//     return { success: true, data: res.data };
+//   },
+
+//   // ==========================================
+//   // SECTION: USER MANAGEMENT (Client / Attorney)
+//   // ==========================================
+//   getAllUsers: async () => {
+//     const res = await api.get("/auth/getall");
+//     return { success: true, data: res.data };
+//   },
+
+//   deleteUser: async (id) => {
+//     const res = await api.delete(`/auth/${id}`);
+//     return res.data;
+//   },
+
+//   getAllClients: async () => {
+//     const response = await api.get("/client/getall");
+//     return response.data;
+//   },
+
+//   deleteClient: async (id) => {
+//     const response = await api.delete(`/client/delete/${id}`);
+//     return response.data;
+//   },
+
+//   getAllAttorneys: async () => {
+//     const response = await api.get("/attorney/getall");
+//     return response.data;
+//   },
+
+//   deleteAttorney: async (id) => {
+//     const response = await api.delete(`/attorney/delete/${id}`);
+//     return response.data;
+//   },
+
+//   // ==========================================
+//   // SECTION: CAPABILITY CATEGORIES (Multipart/FormData)
+//   // ==========================================
+//   getAllCapabilityCategories: async () => {
+//     const response = await api.get("/capability-categories/get-all");
+//     return response.data;
+//   },
+
+// // 2. Create Method ko update karein (Taki ID 25 jaisi galti na ho)
+// createCapabilityCategory: async (formData) => {
+//   // Yahan formData component se seedha pass ho raha hai
+//   const response = await api.post("/capability-categories/create", formData, {
+//     headers: { 'Content-Type': 'multipart/form-data' }
+//   });
+//   return response.data;
+// },
+// // authService.js ke andar update method
+// updateCapabilityCategory: async (id, payload) => {
+//   const data = new FormData();
+//   data.append("categoryName", payload.categoryName);
+//   data.append("description", payload.description);
+  
+//   // Sirf tabhi append karein agar user ne nayi file select ki ho
+//   if (payload.bannerImage instanceof File) {
+//     data.append("bannerImage", payload.bannerImage);
+//   }
+
+//   const response = await api.put(`/capability-categories/update/${id}`, data, {
+//     headers: { "Content-Type": "multipart/form-data" },
+//   });
+//   return response.data;
+// },
+
+//   deleteCapabilityCategory: async (id) => {
+//     const response = await api.delete(`/capability-categories/delete/${id}`);
+//     return response.data;
+//   },
+
+//   // ==========================================
+//   // SECTION: CAPABILITY SUBCATEGORIES (Multipart/FormData)
+//   // ==========================================
+//   getAllCapabilitySubCategories: async () => {
+//     const res = await api.get("/capability-subcategory/getall-subcategory");
+//     return { success: true, data: res.data.data || res.data || [] };
+//   },
+
+//   createCapabilitySubCategory: async (formData) => {
+//   // Hum component se seedha FormData bhejenge
+//   const res = await api.post("/capability-subcategory/create", formData, {
+//     headers: { "Content-Type": "multipart/form-data" }
+//   });
+//   return res.data;
+// },
+
+// updateCapabilitySubCategory: async (id, formData) => {
+//   const res = await api.put(`/capability-subcategory/update/${id}`, formData, {
+//     headers: { "Content-Type": "multipart/form-data" }
+//   });
+//   return res.data;
+// },
+//   deleteCapabilitySubCategory: async (id) => {
+//     const res = await api.delete(`/capability-subcategory/delete/${id}`);
+//     return res.data;
+//   },
+
+//   // ==========================================
+//   // SECTION: CMS CONTENT (JSON Data)
+//   // ==========================================
+//   getAllCMSCategories: async () => {
+//     const response = await api.get("/cms-category/getall");
+//     return response.data;
+//   },
+
+//   createCMSCategory: async (data) => {
+//     // API Expects: { adminId, categoryId, subcategoryIds, content }
+//     const response = await api.post("/cms-category/create", data);
+//     return response.data;
+//   },
+
+//   updateCMSCategory: async (id, data) => {
+//     const response = await api.put(`/cms-category/update/${id}`, data);
+//     return response.data;
+//   },
+
+//   deleteCMSCategory: async (id) => {
+//     const response = await api.delete(`/cms-category/delete/${id}`);
+//     return response.data;
+//   },
+
+//   getAllCMSSubcategories: async () => {
+//     const response = await api.get("/cms-subcategory/getall");
+//     return response.data;
+//   },
+
+//   createCMSSubcategory: async (data) => {
+//     const response = await api.post("/cms-subcategory/create", data);
+//     return response.data;
+//   },
+
+//   updateCMSSubcategory: async (id, data) => {
+//     const response = await api.put(`/cms-subcategory/update/${id}`, data);
+//     return response.data;
+//   },
+
+//   deleteCMSSubcategory: async (id) => {
+//     const response = await api.delete(`/cms-subcategory/delete/${id}`);
+//     return response.data;
+//   },
+
+//   // ==========================================
+//   // SECTION: OTHER CMS (News, Terms, Privacy, Firm)
+//   // ==========================================
+//   getAllNews: async () => {
+//     const res = await api.get("/news/getall");
+//     return { success: true, data: res.data };
+//   },
+
+//   createNews: async (formData) => {
+//     const res = await api.post("/news/create", formData);
+//     return { success: true, data: res.data };
+//   },
+
+//   deleteNews: async (id) => {
+//     const res = await api.delete(`/news/delete/${id}`);
+//     return { success: true, data: res.data };
+//   },
+
+//   getAllTerms: async () => {
+//     const res = await api.get("/terms-condition/getall");
+//     return { success: true, data: res.data };
+//   },
+
+//   createTerm: async (data) => {
+//     const res = await api.post("/terms-condition/create", { ...data, adminId: 3 });
+//     return { success: true, data: res.data };
+//   },
+
+//   deleteTerm: async (id) => {
+//     const res = await api.delete(`/terms-condition/delete/${id}`);
+//     return { success: true, data: res.data };
+//   },
+
+//   getAllPrivacyPolicies: async () => {
+//     const res = await api.get("/privacy-policy/getall");
+//     return { success: true, data: res.data };
+//   },
+
+//   createPrivacyPolicy: async (data) => {
+//     const res = await api.post("/privacy-policy/create", { ...data, adminId: 3 });
+//     return { success: true, data: res.data };
+//   },
+
+//   deletePrivacyPolicy: async (id) => {
+//     const res = await api.delete(`/privacy-policy/delete/${id}`);
+//     return { success: true, data: res.data };
+//   },
+
+//   getAllOurFirm: async () => {
+//     const res = await api.get("/ourfirm/getall");
+//     return { success: true, data: res.data };
+//   },
+
+//   deleteOurFirm: async (id) => {
+//     const res = await api.delete(`/ourfirm/delete/${id}`);
+//     return { success: true, data: res.data };
+//   },
+
+//   getAllContacts: async () => {
+//     const res = await api.get("/contact/getall");
+//     return { success: true, data: res.data };
+//   },
+
+//   getAllPromoters: async () => {
+//     const res = await api.get("/promoter/getall");
+//     return { success: true, data: res.data };
+//   },
+
+//   getAllAwards: async () => {
+//     const res = await api.get("/award/getall");
+//     return { success: true, data: res.data };
+//   }
+// };
+
+// export default authService;

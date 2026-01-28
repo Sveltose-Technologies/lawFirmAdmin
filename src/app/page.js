@@ -112,7 +112,7 @@
 "use client";
 import React from "react";
 import { Col, Row } from "reactstrap";
-// ये पाथ्स अपनी फाइल स्ट्रक्चर के हिसाब से चेक कर लें
+
 import ProfitChart from "@/app/HeroSection/ProfitChart"; 
 import SalesChart from "@/app/(admin-panel)/components/dashboard/SalesChart";
 import ProjectTables from "@/app/(admin-panel)/components/dashboard/ProjectTable";
