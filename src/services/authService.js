@@ -5,7 +5,7 @@ import api from "./api";
 
 const authService = {
   // Base URL for Images
-  IMG_URL: "http://72.62.87.252:3000",
+  IMG_URL: "https://nodejs.nrislawfirm.com",
 
   getImgUrl: (path) => {
     if (!path || path === "null" || path === "undefined") {
@@ -18,7 +18,7 @@ const authService = {
     const cleanPath = path.startsWith("/") ? path.substring(1) : path;
 
     // The base URL
-    const BASE = "http://72.62.87.252:3000";
+    const BASE = "https://nodejs.nrislawfirm.com";
 
     // Check if the path already contains 'uploads'
     if (cleanPath.startsWith("uploads/")) {
@@ -648,6 +648,8 @@ const authService = {
 
   getAllClients: async () => {
     const response = await api.get("/client/getall");
+    console.log("client" , response);
+    
     return response.data;
   },
   deleteClient: async (id) => {
