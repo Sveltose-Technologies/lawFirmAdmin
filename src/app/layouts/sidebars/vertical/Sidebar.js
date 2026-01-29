@@ -319,8 +319,8 @@ const navigation = [
     icon: "bi bi-file-earmark-bar-graph",
   },
   { header: "CONTENT & CMS" },
-  { title: "Blogs", href: "/blogs", icon: "bi bi-newspaper" },
-  { title: "Blog Category", href: "/category", icon: "bi bi-bookmarks" },
+  
+  // { title: "Blog Category", href: "/category", icon: "bi bi-bookmarks" },
   { title: "Media", href: "/media", icon: "bi bi-images" },
   {
     title: "Location",
