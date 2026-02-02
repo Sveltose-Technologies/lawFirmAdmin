@@ -60,6 +60,61 @@ const authService = {
       };
     }
   },
+  // [POST] - FORGOT PASSWORD (Send OTP)
+  forgotPassword: async (email) => {
+    try {
+      console.log("Calling Forgot Password API for:", email);
+      const response = await api.post("/admin/forgot-password", { email });
+      return {
+        success: true,
+        message: response.data.message || "OTP sent to email",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.message || "Failed to send OTP",
+      };
+    }
+  },
+
+  // [POST] - VERIFY OTP
+  verifyOtp: async (email, otp) => {
+    try {
+      console.log("Calling Verify OTP API with:", { email, otp });
+      const response = await api.post("/admin/verify-otp", { email, otp });
+      return {
+        success: true,
+        message: response.data.message || "OTP Verified",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.message || "Invalid OTP",
+      };
+    }
+  },
+
+  // [POST] - RESET PASSWORD
+  resetPassword: async (email, newPassword, confirmPassword) => {
+    try {
+      const response = await api.post("/admin/reset-password", {
+        email,
+        newPassword,
+        confirmPassword,
+      });
+      console.error("Reset password:", response);
+      return {
+        success: true,
+        message: response.data.message || "Password reset successful",
+      };
+    } catch (error) {
+      console.error("Reset password error:", error);
+      return {
+        success: false,
+        message: error.response?.data?.message || "Password reset failed",
+      };
+    }
+  },
 
   // [LOGOUT] - CLEAR SESSION
   logout: () => {
@@ -648,8 +703,8 @@ const authService = {
 
   getAllClients: async () => {
     const response = await api.get("/client/getall");
-    console.log("client" , response);
-    
+    console.log("client", response);
+
     return response.data;
   },
   deleteClient: async (id) => {
